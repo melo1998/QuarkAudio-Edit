@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>QuarkAudio-Edit: Chain-of-Thought Reasoning with RAG for Language-Guided Audio Editing</title>
+<meta name="description" content="QuarkAudio-Edit unifies general audio and speech editing with a CoT-RAG ALM planner, MMDiT editor, and progressive GRPO." />
+
+<!-- Open Graph / Twitter Card (for social sharing previews) -->
+<meta property="og:type"        content="website" />
+<meta property="og:title"       content="QuarkAudio-Edit: Chain-of-Thought Reasoning with RAG for Language-Guided Audio Editing" />
+<meta property="og:description" content="The first unified framework for general audio & speech editing, with explicit CoT planning, 510K+ retrieval augmentation, and two-stage progressive GRPO." />
+<meta property="og:image"       content="assets/images/Edit.png" />
+<meta name="twitter:card"       content="summary_large_image" />
+<meta name="twitter:title"      content="QuarkAudio-Edit · CoT-RAG Audio Editing" />
+<meta name="twitter:description" content="Think Before You Edit — unified audio & speech editing with chain-of-thought reasoning." />
+<meta name="twitter:image"      content="assets/images/Edit.png" />
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<!-- Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+<!-- MathJax for inline math -->
+<script>
+  MathJax = {
+    tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+    svg: { fontCache: 'global' }
+  };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+<link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="hero-bg"></div>
+  <div class="container hero-inner">
+    <div class="venue-badge">Under Review · EMNLP 2026</div>
+    <h1 class="title">
+      <span class="title-gradient">Think Before You Edit:</span><br />
+      Chain-of-Thought Reasoning with RAG for<br />
+      Language-Guided Audio Editing
+    </h1>
+    <div class="authors">
+      <span class="author">Anonymous Authors<sup>*</sup></span>
+    </div>
+    <div class="affiliations">
+      <span><sup>*</sup>Author information hidden for double-blind review</span>
+    </div>
+
+    <div class="hero-buttons">
+      <!--
+        Replace the three href="javascript:void(0)" placeholders below with the real
+        paper / code / checkpoints URLs once they are public. The aria-disabled attribute
+        makes the unavailable state explicit for screen readers, and the .btn-disabled
+        class greys out the button so it is not mistaken for a working link.
+      -->
+      <a href="javascript:void(0)" class="btn btn-primary btn-disabled" aria-disabled="true" title="Link will be made available upon paper acceptance">
+        <i class="bi bi-file-earmark-text"></i> Paper <span class="btn-sub">(coming soon)</span>
+      </a>
+      <a href="javascript:void(0)" class="btn btn-secondary btn-disabled" aria-disabled="true" title="Code release is pending final review">
+        <i class="bi bi-github"></i> Code <span class="btn-sub">(coming soon)</span>
+      </a>
+      <a href="#demos" class="btn btn-secondary"><i class="bi bi-music-note-beamed"></i> Audio Demos</a>
+      <a href="javascript:void(0)" class="btn btn-secondary btn-disabled" aria-disabled="true" title="Checkpoints will be released after acceptance">
+        <i class="bi bi-box"></i> Checkpoints <span class="btn-sub">(coming soon)</span>
+      </a>
+    </div>
+
+    <div class="tldr">
+      <strong>TL;DR:</strong> QuarkAudio-Edit is the first unified framework for
+      general audio &amp; speech editing that decouples <em>chain-of-thought planning</em>
+      with <em>large-scale retrieval augmentation</em> from an MMDiT diffusion editor,
+      refined via two-stage progressive GRPO.
+    </div>
+  </div>
+</header>
+
+<!-- ============ NAV ============ -->
+<nav class="sticky-nav">
+  <div class="container">
+    <a href="#overview">Overview</a>
+    <a href="#method">Method</a>
+    <a href="#demos">Audio Demos</a>
+    <a href="#gallery">Baselines Gallery</a>
+    <a href="#reasoning">CoT · RAG</a>
+    <a href="#results">Results</a>
+    <a href="#failures">Failure Cases</a>
+    <a href="#citation">BibTeX</a>
+  </div>
+</nav>
+
+<!-- ============ OVERVIEW ============ -->
+<section id="overview" class="section">
+  <div class="container">
+    <h2 class="section-title">Overview</h2>
+    <div class="overview-grid">
+      <div class="overview-text">
+        <p>
+          <strong>QuarkAudio-Edit</strong> tackles four long-standing limitations of
+          text-guided audio editing (TAE): limited operation coverage, rigid instruction
+          formats, absence of chain-of-thought reasoning, and lack of reasoning-aware
+          optimization.
+        </p>
+        <p>
+          Given a free-form instruction such as
+          <em>"Transform this rainy forest into a sunny day"</em>, our
+          CoT–RAG planner decomposes it into a sequence of interpretable atomic
+          operations over
+          <code>{Add, Remove, Replace, Speed, Loud, Order}</code>,
+          which an MMDiT diffusion editor executes sequentially on the source audio.
+        </p>
+
+        <ul class="feature-list">
+          <li><i class="bi bi-check-circle-fill"></i> <strong>6 atomic operations</strong> — doubles prior coverage</li>
+          <li><i class="bi bi-check-circle-fill"></i> <strong>510K+ RAG index</strong> — robust OOD generalization</li>
+          <li><i class="bi bi-check-circle-fill"></i> <strong>Two-stage progressive GRPO</strong> — reasoning + fidelity</li>
+          <li><i class="bi bi-check-circle-fill"></i> <strong>Unified audio &amp; speech</strong> — single framework</li>
+        </ul>
+      </div>
+      <div class="overview-figure">
+        <img src="assets/images/Edit.png"
+             alt="QuarkAudio-Edit unified audio & speech editing overview"
+             loading="lazy"
+             onerror="handleImageError(this, 'Figure 1 · Unified Editing Overview')" />
+        <p class="figure-caption">
+          <strong>Figure 1.</strong> Unified audio &amp; speech editing. Top: sound-event replacement
+          (alarm → phone ringing) with non-target audio preserved. Bottom: word-level
+          speech editing (<em>Monday</em> → <em>Friday</em>).
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HIGHLIGHT STATS ============ -->
+<section class="stats-section">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value">6</div>
+        <div class="stat-label">Atomic Operations</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">500K+</div>
+        <div class="stat-label">Training Triplets</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">510K+</div>
+        <div class="stat-label">RAG Index Size</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">71.4%</div>
+        <div class="stat-label">FAD Reduction</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">8×</div>
+        <div class="stat-label">Faster Inference</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ METHOD ============ -->
+<section id="method" class="section section-alt">
+  <div class="container">
+    <h2 class="section-title">Method</h2>
+    <p class="section-lead">
+      A decoupled Planner–Editor architecture that separates <em>what</em> to edit
+      (reasoning) from <em>how</em> to edit (signal-level synthesis).
+    </p>
+
+    <div class="method-figure">
+      <img src="assets/images/QuarkAudio_edit.jpg"
+           alt="QuarkAudio-Edit end-to-end framework"
+           loading="lazy"
+           onerror="handleImageError(this, 'Figure 2 · End-to-End Framework')" />
+      <p class="figure-caption">
+        <strong>Figure 2.</strong> End-to-end pipeline. Training triplets are synthesized via
+        Prompt-to-Prompt generation, manual signal-level edits, and online composition.
+        The CoT–RAG ALM planner decomposes free-form instructions into atomic operations;
+        the MMDiT editor executes them sequentially; progressive GRPO refines both stages.
+      </p>
+    </div>
+
+    <div class="method-cards">
+      <div class="method-card">
+        <div class="method-icon"><i class="bi bi-database-fill-gear"></i></div>
+        <h3>Data Synthesis</h3>
+        <p>Three complementary pipelines produce <strong>500K+ triplets</strong>:
+           Prompt-to-Prompt, manual signal-level edits, and online per-epoch composition
+           over AudioSet &amp; VGG-Sound.</p>
+      </div>
+      <div class="method-card">
+        <div class="method-icon"><i class="bi bi-lightbulb-fill"></i></div>
+        <h3>CoT–RAG Planner</h3>
+        <p>Qwen2-Audio based planner decomposes instructions into atomic operations,
+           guided by top-3 retrieved exemplars from a <strong>510K+ FAISS index</strong>
+           (retrieval in &lt; 5 ms).</p>
+      </div>
+      <div class="method-card">
+        <div class="method-icon"><i class="bi bi-soundwave"></i></div>
+        <h3>MMDiT Editor</h3>
+        <p>Multi-modal diffusion transformer built on Stable Audio Open.
+           Source latent is concatenated with the noisy target at every denoising step
+           for faithful non-target preservation.</p>
+      </div>
+      <div class="method-card">
+        <div class="method-icon"><i class="bi bi-arrow-repeat"></i></div>
+        <h3>Progressive GRPO</h3>
+        <p>Two-stage RL: Stage 1 applies multi-rule rewards on CoT chains;
+           Stage 2 uses semantic/fidelity/temporal rewards with a progressive schedule
+           to refine audio edits.</p>
+      </div>
+    </div>
+
+    <div class="method-subfigures">
+      <div class="subfigure">
+        <img src="assets/images/data_pipeline.jpg"
+             alt="Data synthesis pipeline"
+             loading="lazy"
+             onerror="handleImageError(this, 'Figure 3 · Data Synthesis Pipeline')" />
+        <p class="figure-caption"><strong>Figure 3.</strong> Data synthesis pipeline with
+          Bayesian-optimized Prompt-to-Prompt generation.</p>
+      </div>
+      <div class="subfigure">
+        <img src="assets/images/GRPO_training.png"
+             alt="Progressive GRPO training"
+             loading="lazy"
+             onerror="handleImageError(this, 'Figure 4 · Progressive GRPO')" />
+        <p class="figure-caption"><strong>Figure 4.</strong> Progressive GRPO pipeline:
+          CoT policy optimization followed by audio-quality optimization.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ AUDIO DEMOS ============ -->
+<section id="demos" class="section">
+  <div class="container">
+    <h2 class="section-title">Audio Demos</h2>
+    <p class="section-lead">
+      Listen to paired source and edited audio produced by <strong>QuarkAudio-Edit</strong>
+      from free-form natural-language instructions.
+    </p>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="operations">
+        <i class="bi bi-grid-3x3-gap-fill"></i> Six Atomic Operations
+      </button>
+      <button class="tab-btn" data-tab="complex">
+        <i class="bi bi-diagram-3-fill"></i> Complex Multi-Step Instructions
+      </button>
+      <button class="tab-btn" data-tab="speech">
+        <i class="bi bi-mic-fill"></i> Speech Editing
+      </button>
+      <button class="tab-btn" data-tab="baselines">
+        <i class="bi bi-bar-chart-steps"></i> vs. Baselines
+      </button>
+    </div>
+
+    <!-- Tab: Operations -->
+    <div class="tab-panel active" id="tab-operations">
+      <div class="op-filter">
+        <button class="chip active" data-op="all">All</button>
+        <button class="chip op-add" data-op="add">Add</button>
+        <button class="chip op-remove" data-op="remove">Remove</button>
+        <button class="chip op-replace" data-op="replace">Replace</button>
+        <button class="chip op-speed" data-op="speed">Speed</button>
+        <button class="chip op-loud" data-op="loud">Loud</button>
+        <button class="chip op-order" data-op="order">Order</button>
+      </div>
+
+      <div class="demo-grid" id="operations-grid">
+        <!-- Cards injected by JS -->
+      </div>
+    </div>
+
+    <!-- Tab: Complex -->
+    <div class="tab-panel" id="tab-complex">
+      <div class="demo-list" id="complex-list">
+        <!-- Cards injected by JS -->
+      </div>
+    </div>
+
+    <!-- Tab: Speech -->
+    <div class="tab-panel" id="tab-speech">
+      <div class="demo-grid" id="speech-grid">
+        <!-- Cards injected by JS -->
+      </div>
+    </div>
+
+    <!-- Tab: Baselines -->
+    <div class="tab-panel" id="tab-baselines">
+      <div class="baseline-table-wrap" id="baseline-container">
+        <!-- Cards injected by JS -->
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ EXTERNAL BASELINES GALLERY ============ -->
+<section id="gallery" class="section section-alt">
+  <div class="container">
+    <h2 class="section-title">External Baselines Gallery</h2>
+    <p class="section-lead">
+      Real audio samples from published baseline systems, crawled from their official demo pages.
+      Listen and compare editing quality across different approaches.
+    </p>
+
+    <!-- Source selector tabs -->
+    <div class="gallery-tabs">
+      <button class="gallery-tab active" data-source="mmediting">
+        <i class="bi bi-music-note-list"></i> MMEditing
+      </button>
+      <button class="gallery-tab" data-source="smartdj">
+        <i class="bi bi-stars"></i> SmartDJ
+      </button>
+      <button class="gallery-tab" data-source="saoinstruct">
+        <i class="bi bi-pencil-square"></i> SAO-Instruct
+      </button>
+      <button class="gallery-tab" data-source="voicecraftx">
+        <i class="bi bi-mic"></i> VoiceCraft-X
+      </button>
+      <button class="gallery-tab" data-source="audioomni">
+        <i class="bi bi-soundwave"></i> Audio-Omni
+      </button>
+    </div>
+
+    <!-- Gallery content rendered by JS -->
+    <div id="gallery-content" class="gallery-content">
+      <!-- Cards injected by JS from EXTERNAL_GALLERY -->
+    </div>
+  </div>
+</section>
+
+<!-- ============ REASONING VISUALIZATION ============ -->
+<section id="reasoning" class="section section-alt">
+  <div class="container">
+    <h2 class="section-title">Chain-of-Thought Reasoning with RAG</h2>
+    <p class="section-lead">
+      Peek inside the planner: every complex instruction is grounded in retrieved
+      exemplars and decomposed into a transparent reasoning chain.
+    </p>
+
+    <div class="reasoning-demo">
+      <div class="reasoning-input">
+        <div class="bubble user-bubble">
+          <div class="bubble-label"><i class="bi bi-person-fill"></i> User Instruction</div>
+          <div class="bubble-content">
+            "Make this sound like a quiet park on a Sunday morning."
+          </div>
+        </div>
+        <div class="bubble audio-bubble">
+          <div class="bubble-label"><i class="bi bi-soundwave"></i> Source Audio</div>
+          <div class="bubble-content">
+            <em>Detected events:</em> car engines, distant siren, footsteps on pavement.
+          </div>
+        </div>
+      </div>
+
+      <div class="reasoning-flow">
+        <!-- RAG Retrieval -->
+        <div class="reasoning-step">
+          <div class="step-badge rag-badge"><i class="bi bi-search"></i> Step 1 · RAG Retrieval</div>
+          <div class="step-body">
+            <div class="retrieved-exemplar">
+              <div class="exemplar-header">
+                <span class="sim-score">sim 0.87</span>
+                <span class="exemplar-title">"Turn this into a peaceful garden setting."</span>
+              </div>
+              <div class="exemplar-decomp">
+                <span class="op-tag op-remove">Remove</span> machinery noise →
+                <span class="op-tag op-add">Add</span> bird song →
+                <span class="op-tag op-loud">Loud</span> −2 dB
+              </div>
+            </div>
+            <div class="retrieved-exemplar">
+              <div class="exemplar-header">
+                <span class="sim-score">sim 0.82</span>
+                <span class="exemplar-title">"Make this recording feel like an early morning."</span>
+              </div>
+              <div class="exemplar-decomp">
+                <span class="op-tag op-remove">Remove</span> traffic →
+                <span class="op-tag op-add">Add</span> distant church bells →
+                <span class="op-tag op-loud">Loud</span> −4 dB
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CoT Reasoning -->
+        <div class="reasoning-step">
+          <div class="step-badge cot-badge"><i class="bi bi-lightbulb-fill"></i> Step 2 · CoT Reasoning</div>
+          <div class="step-body">
+            <div class="cot-trace">
+              The retrieved exemplars reveal a consistent pattern: remove urban noise,
+              add nature sounds, and reduce overall volume. Adapting to this audio,
+              I will: remove car engines and the siren, keep the footsteps
+              (consistent with a park), add bird song and rustling leaves,
+              then lower the overall loudness for a peaceful atmosphere.
+            </div>
+          </div>
+        </div>
+
+        <!-- Atomic Plan -->
+        <div class="reasoning-step">
+          <div class="step-badge plan-badge"><i class="bi bi-list-ol"></i> Step 3 · Atomic Plan</div>
+          <div class="step-body">
+            <ol class="atomic-plan">
+              <li><span class="op-tag op-remove">Remove</span> car engines</li>
+              <li><span class="op-tag op-remove">Remove</span> distant siren</li>
+              <li><span class="op-tag op-add">Add</span> bird song <small>(SNR +4 dB)</small></li>
+              <li><span class="op-tag op-add">Add</span> rustling leaves <small>(SNR +2 dB)</small></li>
+              <li><span class="op-tag op-loud">Loud</span> −3 dB</li>
+            </ol>
+          </div>
+        </div>
+
+        <!-- Output -->
+        <div class="reasoning-step">
+          <div class="step-badge out-badge"><i class="bi bi-check2-circle"></i> Step 4 · Editor Output</div>
+          <div class="step-body">
+            <div class="audio-player-inline">
+              <audio controls preload="none">
+                <source src="assets/audio/complex/park_transform_output.wav" type="audio/wav" />
+                Your browser does not support the audio element.
+              </audio>
+              <span class="audio-caption">Final edited audio (5 sequential edits)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ RESULTS ============ -->
+<section id="results" class="section">
+  <div class="container">
+    <h2 class="section-title">Experimental Results</h2>
+    <p class="section-lead">
+      QuarkAudio-Edit consistently outperforms strong baselines across all six
+      atomic operations and delivers the highest subjective faithfulness.
+    </p>
+
+    <!-- Per-operation -->
+    <h3 class="subsection-title">Per-Operation Comparison (FAD ↓)</h3>
+    <div class="table-wrap">
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>Add</th><th>Remove</th><th>Replace</th>
+            <th>Order</th><th>Loud</th><th>Speed</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>AudioEditor</td><td>3.57</td><td>4.14</td><td>3.54</td><td>—</td><td>—</td><td>—</td></tr>
+          <tr><td>SAO-Instruct</td><td>3.57</td><td>6.53</td><td>4.63</td><td>—</td><td>—</td><td>—</td></tr>
+          <tr><td>MMEdit</td><td>3.72</td><td>10.18</td><td>5.92</td><td>10.08</td><td>6.72</td><td>9.00</td></tr>
+          <tr class="ours-row">
+            <td><strong>QuarkAudio-Edit</strong></td>
+            <td><strong>1.98</strong></td><td><strong>3.50</strong></td><td><strong>2.65</strong></td>
+            <td><strong>2.89</strong></td><td><strong>3.09</strong></td><td><strong>4.35</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Subjective -->
+    <h3 class="subsection-title">Subjective MOS (1–5) &amp; Inference Speed</h3>
+    <div class="table-wrap">
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>Inference (s) ↓</th>
+            <th>Quality ↑</th>
+            <th>Relevance ↑</th>
+            <th>Faithfulness ↑</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>AudioEditor</td><td>79.5</td><td>3.22</td><td>3.33</td><td>2.75</td></tr>
+          <tr><td>ZETA (T=50)</td><td>15.3</td><td>3.56</td><td>3.25</td><td>2.95</td></tr>
+          <tr><td>ZETA (T=75)</td><td>17.8</td><td>3.28</td><td>3.04</td><td>2.75</td></tr>
+          <tr class="ours-row">
+            <td><strong>QuarkAudio-Edit</strong></td>
+            <td><strong>9.94</strong></td>
+            <td>3.54</td>
+            <td><strong>3.83</strong></td>
+            <td><strong>3.99</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Ablation -->
+    <h3 class="subsection-title">Ablation Study (Key Components)</h3>
+    <div class="ablation-grid">
+      <div class="ablation-card">
+        <div class="ablation-label">w/o CoT</div>
+        <div class="ablation-value">+3.71</div>
+        <div class="ablation-desc">ΔFAD — largest single drop</div>
+      </div>
+      <div class="ablation-card">
+        <div class="ablation-label">w/o RAG</div>
+        <div class="ablation-value">+21.7%</div>
+        <div class="ablation-desc">Planner WER increase</div>
+      </div>
+      <div class="ablation-card">
+        <div class="ablation-label">w/o GRPO</div>
+        <div class="ablation-value">+0.76</div>
+        <div class="ablation-desc">ΔFAD vs. full system</div>
+      </div>
+      <div class="ablation-card">
+        <div class="ablation-label">Source-latent init</div>
+        <div class="ablation-value">+1.53</div>
+        <div class="ablation-desc">ΔFAD vs. Gaussian init</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAILURE CASES & LIMITATIONS ============ -->
+<section id="failures" class="section section-alt">
+  <div class="container">
+    <h2 class="section-title">Failure Cases &amp; Limitations</h2>
+    <p class="section-lead">
+      In the spirit of transparent reporting, we document characteristic failure
+      modes of <strong>QuarkAudio-Edit</strong>, diagnose their root causes along
+      the CoT–RAG–MMDiT–GRPO pipeline, and outline concrete directions for
+      future improvements. Each case below is reproducible from our release.
+    </p>
+
+    <!-- Failure Category Summary -->
+    <div class="failure-summary">
+      <div class="failure-summary-card">
+        <div class="fs-icon fs-icon-cot"><i class="bi bi-chat-square-text"></i></div>
+        <div class="fs-label">Ambiguous phrasing</div>
+        <div class="fs-stage">stage: <code>CoT Planner</code></div>
+      </div>
+      <div class="failure-summary-card">
+        <div class="fs-icon fs-icon-rag"><i class="bi bi-search"></i></div>
+        <div class="fs-label">Long-tail retrieval miss</div>
+        <div class="fs-stage">stage: <code>RAG Index</code></div>
+      </div>
+      <div class="failure-summary-card">
+        <div class="fs-icon fs-icon-edit"><i class="bi bi-layers"></i></div>
+        <div class="fs-label">Dense-scene confusion</div>
+        <div class="fs-stage">stage: <code>MMDiT Editor</code></div>
+      </div>
+      <div class="failure-summary-card">
+        <div class="fs-icon fs-icon-blend"><i class="bi bi-soundwave"></i></div>
+        <div class="fs-label">Unnatural overlay</div>
+        <div class="fs-stage">stage: <code>MMDiT Editor</code></div>
+      </div>
+    </div>
+
+    <!-- Failure list rendered by JS -->
+    <div class="failure-list" id="failure-list">
+      <!-- Cards injected by JS from FAILURE_CASES -->
+    </div>
+
+    <!-- Roadmap -->
+    <div class="roadmap">
+      <h3 class="subsection-title" style="margin-top:0;">
+        <i class="bi bi-compass"></i> Roadmap for Future Improvements
+      </h3>
+      <p style="color:var(--c-text-muted); margin-bottom:18px;">
+        The four failure modes above motivate the following concrete research
+        directions, which we plan to explore in the camera-ready and follow-up work:
+      </p>
+      <div class="roadmap-grid">
+        <div class="roadmap-card">
+          <div class="roadmap-tag roadmap-tag-cot">R1 · Planner robustness</div>
+          <p>
+            Augment training with automatic <em>instruction paraphrases</em>
+            (covering idiomatic, negated, and hedged phrasings) and add a
+            <em>paraphrase-invariance reward</em> in Stage-1 GRPO to encourage
+            semantically equivalent instructions to yield identical atomic plans.
+          </p>
+        </div>
+        <div class="roadmap-card">
+          <div class="roadmap-tag roadmap-tag-rag">R2 · Long-tail coverage</div>
+          <p>
+            Expand the RAG index beyond the current 510K entries with rare-event
+            corpora (FSD50K, Clotho-Detail). Replace the dense-only retriever
+            with a <em>hybrid dense + BM25</em> scheme so that uncommon
+            sound-event terms are not dominated by embedding co-occurrence.
+          </p>
+        </div>
+        <div class="roadmap-card">
+          <div class="roadmap-tag roadmap-tag-edit">R3 · Event-level control</div>
+          <p>
+            Introduce <em>event-level mask supervision</em> from a frozen
+            sound-event detector during MMDiT training, plus an attention
+            regularizer that penalizes non-target events being altered, to
+            address dense-scene confusion.
+          </p>
+        </div>
+        <div class="roadmap-card">
+          <div class="roadmap-tag roadmap-tag-blend">R4 · Natural blending</div>
+          <p>
+            Add an <em>acoustic-scene prior</em> (room impulse response + SNR
+            distribution learned from AudioSet) and a <em>loudness-aware reward</em>
+            to Stage-2 GRPO, so that inserted events match the reverberation
+            and level profile of the source scene.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="honesty-note">
+      <i class="bi bi-shield-check"></i>
+      <div>
+        <strong>On reporting failures.</strong>
+        Consistent with recent community practice (e.g., SAO-Instruct), we believe
+        that transparent disclosure of failure modes is essential for reproducible
+        research. All failure audios above are produced by the <em>released</em>
+        QuarkAudio-Edit checkpoint with default hyper-parameters — i.e., without
+        per-sample CFG/steps tuning — to reflect real-world deployment behavior.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CITATION ============ -->
+<section id="citation" class="section section-alt">
+  <div class="container">
+    <h2 class="section-title">BibTeX</h2>
+    <div class="bibtex-box">
+      <button class="copy-btn" onclick="copyBibtex()"><i class="bi bi-clipboard"></i> Copy</button>
+      <pre id="bibtex">@inproceedings{quarkaudioedit2026,
+  title     = {Think Before You Edit: Chain-of-Thought Reasoning with RAG
+               for Language-Guided Audio Editing},
+  author    = {Anonymous Authors},
+  booktitle = {Proceedings of EMNLP},
+  year      = {2026},
+  note      = {Under review}
+}</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="container">
+    <p>
+      © 2026 QuarkAudio-Edit Project · Page template inspired by
+      <a href="https://zitonglan.github.io/project/smartdj/smartdj.html" target="_blank" rel="noopener">SmartDJ</a>,
+      <a href="https://eth-disco.github.io/sao-instruct/" target="_blank" rel="noopener">SAO-Instruct</a>,
+      <a href="https://zeyuet.github.io/Audio-Omni/" target="_blank" rel="noopener">Audio-Omni</a>,
+      <a href="https://bagpiper-cmu.github.io/" target="_blank" rel="noopener">Bagpiper</a>.
+    </p>
+    <p class="disclaimer">
+      <i class="bi bi-info-circle"></i>
+      Audio samples under <code>assets/audio/</code> will be updated with final
+      high-quality generations upon paper acceptance. The current samples are
+      provided for review purposes.
+    </p>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script src="assets/js/data.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

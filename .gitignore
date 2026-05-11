@@ -1,0 +1,41 @@
+# ============================================================
+# QuarkAudio-Edit Demo Page — .gitignore
+# ============================================================
+
+# Local verification / scratch
+_verify.py
+*.log
+.DS_Store
+Thumbs.db
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*~
+
+# Node (if you later add tooling)
+node_modules/
+package-lock.json
+yarn.lock
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Temporary audio / figures staging
+_staging/
+
+# Build artifacts
+dist/
+build/
+
+# OS / env
+.env
+.env.local
+
+# NOTE: do NOT ignore .nojekyll — it must be committed so that
+# GitHub Pages disables Jekyll processing for this site.
