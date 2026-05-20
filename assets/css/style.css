@@ -1588,3 +1588,36 @@ audio {
   text-transform: uppercase;
   letter-spacing: 0.3px;
 }
+
+/* ============================================================
+   ABSTRACT BOX
+   ============================================================ */
+.abstract-box {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 28px 32px;
+  background: var(--c-bg-alt);
+  border: 1px solid var(--c-border);
+  border-left: 4px solid var(--c-primary);
+  border-radius: var(--radius);
+  font-size: 0.98rem;
+  line-height: 1.75;
+  color: var(--c-text);
+}
+
+.abstract-box p {
+  margin: 0;
+  text-align: justify;
+}
+
+/* ============================================================
+   TABLE NOTE
+   ============================================================ */
+.table-note {
+  max-width: 860px;
+  margin: 0 auto 16px;
+  font-size: 0.88rem;
+  color: var(--c-text-muted);
+  line-height: 1.6;
+  text-align: center;
+}

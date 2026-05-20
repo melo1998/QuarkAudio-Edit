@@ -1,6 +1,14 @@
 /* ============================================================
    QuarkAudio-Edit Demo Page · Data Definitions
    Replace audio file paths with actual generated samples before publication.
+   
+   Key numbers (from paper):
+   - 6 atomic operations: Add, Remove, Replace, Speed, Loudness, Order
+   - 500K+ training triplets per epoch (150K offline + ~350K online)
+   - 510K+ RAG index entries (FAISS)
+   - 50K CoT instruction-decomposition pairs
+   - FAD reduction: up to 71.4% over strongest baseline
+   - Inference: 9.94s (8x faster than AudioEditor)
    ============================================================ */
 
 /* ---------- 6 Atomic Operations ----------
@@ -60,7 +68,7 @@ const OPERATION_DEMOS = [
   {
     op: 'speed',
     opLabel: 'Speed',
-    instruction: 'Speed up this recording to 1.5× tempo.',
+    instruction: 'Speed up this recording to 1.5x tempo.',
     src: 'assets/audio/operations/speed_01_src.wav',
     edited: 'assets/audio/operations/speed_01_edited.wav',
   },
@@ -72,17 +80,17 @@ const OPERATION_DEMOS = [
     edited: 'assets/audio/operations/speed_02_edited.wav',
   },
 
-  // LOUD
+  // LOUDNESS
   {
     op: 'loud',
-    opLabel: 'Loud',
+    opLabel: 'Loudness',
     instruction: 'Make the overall volume noticeably quieter.',
     src: 'assets/audio/operations/loud_01_src.wav',
     edited: 'assets/audio/operations/loud_01_edited.wav',
   },
   {
     op: 'loud',
-    opLabel: 'Loud',
+    opLabel: 'Loudness',
     instruction: 'Boost the percussion by 6 dB.',
     src: 'assets/audio/operations/loud_02_src.wav',
     edited: 'assets/audio/operations/loud_02_edited.wav',
