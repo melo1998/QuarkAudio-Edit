@@ -120,7 +120,7 @@
         </p>
         <p>
           Given a free-form instruction such as
-          <em>&ldquo;Transform this rainy forest into a sunny beach&rdquo;</em>, the
+          <em>&ldquo;Turn this recording of birds chirping over traffic noise into a rainy evening caf&eacute; scene&rdquo;</em>, the
           CoT&ndash;RAG planner decomposes it into a sequence of interpretable atomic
           operations from the set
           <code>{Add, Remove, Replace, Speed, Loudness, Order}</code>,
@@ -140,9 +140,9 @@
              loading="lazy"
              onerror="handleImageError(this, 'Figure 1 &middot; Editing Scope and Atomic Operations')" />
         <p class="figure-caption">
-          <strong>Figure 1.</strong> Editing scope and atomic operations. The system supports six basic operations
-          and high-level instructions for sound-event editing, with preliminary word-level speech editing.
-          Top: sound-event replacement; Bottom: word-level speech editing.
+          <strong>Figure 1.</strong> QuarkAudio-Edit supports six atomic operations for sound-event editing and speech editing.
+          It decomposes free-form instructions (e.g., &ldquo;replace rain with guitar&rdquo;) into verifiable steps,
+          preserving non-target content (cat meow).
         </p>
       </div>
     </div>
@@ -448,14 +448,14 @@
           </tr>
         </thead>
         <tbody>
-          <tr><td rowspan="2">w/o ALM</td><td>AudioEditor</td><td>42.51s</td><td>2.14</td><td>5.26</td><td>62.38</td><td>3.41</td><td>3.08</td><td>0.112</td><td>2.71</td><td>2.85</td></tr>
-          <tr><td>MMEdit</td><td>19.28s</td><td>2.23</td><td>5.58</td><td>58.92</td><td>3.52</td><td>2.96</td><td>0.105</td><td>2.95</td><td>3.32</td></tr>
-          <tr><td rowspan="6">w/ ALM</td><td>SAO-Instruct</td><td>18.58s</td><td>1.89</td><td>4.73</td><td>55.14</td><td>3.18</td><td>3.45</td><td>0.148</td><td>3.11</td><td>3.58</td></tr>
-          <tr><td>SmartDJ</td><td>8.62s</td><td>1.72</td><td>4.15</td><td>48.36</td><td>2.87</td><td>3.82</td><td>0.175</td><td>3.23</td><td>3.75</td></tr>
-          <tr class="ours-row"><td><strong>QuarkAudio-Edit</strong></td><td><strong>9.85s</strong></td><td><strong>1.38</strong></td><td><strong>3.27</strong></td><td><strong>35.41</strong></td><td><strong>2.18</strong></td><td><strong>4.32</strong></td><td><strong>0.241</strong></td><td><strong>3.53</strong></td><td><strong>3.98</strong></td></tr>
-          <tr><td>&emsp;w/o RAG</td><td>9.72s</td><td>1.51</td><td>3.59</td><td>38.28</td><td>2.42</td><td>4.16</td><td>0.225</td><td>3.42</td><td>3.86</td></tr>
-          <tr><td>&emsp;w/o CoT</td><td>8.25s</td><td>1.62</td><td>3.89</td><td>41.28</td><td>2.61</td><td>4.05</td><td>0.212</td><td>3.24</td><td>3.61</td></tr>
-          <tr><td>&emsp;w/o PRL</td><td>8.25s</td><td>1.79</td><td>4.48</td><td>46.73</td><td>2.85</td><td>3.89</td><td>0.186</td><td>3.12</td><td>3.42</td></tr>
+          <tr><td>w/o ALM</td><td>AudioEditor</td><td>42.51s</td><td>2.14</td><td>5.26</td><td>62.38</td><td>3.41</td><td>3.08</td><td>0.112</td><td>2.71<small>&pm;0.89</small></td><td>2.85<small>&pm;0.94</small></td></tr>
+          <tr><td rowspan="7">w/ ALM</td><td>MMEdit</td><td>19.28s</td><td>2.23</td><td>5.58</td><td>58.92</td><td>3.52</td><td>2.96</td><td>0.105</td><td>2.95<small>&pm;0.85</small></td><td>3.32<small>&pm;0.82</small></td></tr>
+          <tr><td>SAO-Instruct</td><td>18.58s</td><td>1.89</td><td>4.73</td><td>55.14</td><td>3.18</td><td>3.45</td><td>0.148</td><td>3.11<small>&pm;0.79</small></td><td>3.58<small>&pm;0.76</small></td></tr>
+          <tr><td>SmartDJ</td><td>8.62s</td><td>1.72</td><td>4.15</td><td>48.36</td><td>2.87</td><td>3.82</td><td>0.175</td><td>3.23<small>&pm;0.74</small></td><td>3.75<small>&pm;0.71</small></td></tr>
+          <tr class="ours-row"><td><strong>QuarkAudio-Edit</strong></td><td><strong>9.85s</strong></td><td><strong>1.38</strong></td><td><strong>3.27</strong></td><td><strong>35.41</strong></td><td><strong>2.18</strong></td><td><strong>4.32</strong></td><td><strong>0.241</strong></td><td><strong>3.53</strong><small>&pm;0.65</small></td><td><strong>3.98</strong><small>&pm;0.58</small></td></tr>
+          <tr><td>&emsp;w/o RAG</td><td>9.72s</td><td>1.51</td><td>3.59</td><td>38.28</td><td>2.42</td><td>4.16</td><td>0.225</td><td>3.42<small>&pm;0.68</small></td><td>3.86<small>&pm;0.62</small></td></tr>
+          <tr><td>&emsp;w/o CoT</td><td>8.25s</td><td>1.62</td><td>3.89</td><td>41.28</td><td>2.61</td><td>4.05</td><td>0.212</td><td>3.24<small>&pm;0.76</small></td><td>3.61<small>&pm;0.74</small></td></tr>
+          <tr><td>&emsp;w/o PRL</td><td>8.25s</td><td>1.79</td><td>4.48</td><td>46.73</td><td>2.85</td><td>3.89</td><td>0.186</td><td>3.12<small>&pm;0.81</small></td><td>3.42<small>&pm;0.79</small></td></tr>
         </tbody>
       </table>
     </div>
@@ -523,11 +523,11 @@
     </div>
 
     <!-- Speech Editing -->
-    <h3 class="subsection-title">Preliminary Speech Editing (RealEdit Benchmark)</h3>
+    <h3 class="subsection-title">Editor Generalization: Speech Editing (RealEdit Benchmark)</h3>
     <p class="table-note">
-      Without any architecture changes, the MMDiT editor handles word-level speech insertion, deletion,
-      and substitution by conditioning on the target transcript. The ALM planner is bypassed as speech
-      editing instructions are already explicit target transcripts.
+      To assess cross-domain generalization, we evaluate on the RealEdit benchmark. Without any architecture changes,
+      the MMDiT editor handles word-level insertion, deletion, and substitution by conditioning on the target transcript.
+      The ALM planner is bypassed since speech instructions are explicit transcripts requiring no decomposition.
     </p>
     <div class="table-wrap">
       <table class="results-table">
@@ -589,9 +589,9 @@
     <!-- Error Accumulation -->
     <h3 class="subsection-title">Error Accumulation vs. Decomposition Steps</h3>
     <p class="table-note">
-      Editing quality degrades near-linearly with decomposition length (FAD +0.77/step).
-      58% of FAD increase is attributable to planner decomposition errors;
-      42% stems from compounding diffusion reconstruction artifacts.
+      Performance on complex multi-step instructions degrades due to error accumulation in the sequential planning paradigm.
+      Error taxonomy analysis identifies planner reasoning as the primary bottleneck, suggesting that
+      scaling inference-time reasoning may yield further improvements.
     </p>
 
     <!-- Spectrogram Comparison -->
@@ -637,7 +637,7 @@
   <div class="container">
     <h2 class="section-title">Speech Editing Samples</h2>
     <p class="section-lead">
-      Preliminary speech editing results on the RealEdit benchmark. The same MMDiT editor backbone
+      Cross-domain speech editing results on the RealEdit benchmark. The same MMDiT editor backbone
       handles word-level insertion, deletion, and substitution without any speech-specific modifications.
       <strong>Spot the edited region</strong> &mdash; non-target acoustic content (timbre, prosody, background) is preserved.
     </p>
@@ -863,8 +863,8 @@ function switchSpeechLang(lang) {
     <div class="bibtex-box">
       <button class="copy-btn" onclick="copyBibtex()"><i class="bi bi-clipboard"></i> Copy</button>
       <pre id="bibtex">@inproceedings{quarkaudioedit2026,
-  title     = {Think Before You Edit: Chain-of-Thought Reasoning
-               with {RAG} for Language-Guided Audio Editing},
+  title     = {{QuarkAudio-Edit}: Atomic Decomposition with
+               Retrieval-Augmented Planning for Audio Editing},
   author    = {Anonymous Authors},
   booktitle = {Proceedings of the 2026 Conference on Empirical
                Methods in Natural Language Processing (EMNLP)},
