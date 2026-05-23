@@ -1,0 +1,2 @@
+Edit Instruction：Slow down the sound of Coin dropping, Rustling
+Edit Type：Speed

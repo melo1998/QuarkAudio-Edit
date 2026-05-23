@@ -1,115 +1,79 @@
 /* ============================================================
    QuarkAudio-Edit Demo Page · Data Definitions
-   Replace audio file paths with actual generated samples before publication.
+   Real audio samples from audio_vs comparison directory.
    
    Key numbers (from paper):
    - 6 atomic operations: Add, Remove, Replace, Speed, Loudness, Order
    - 500K+ training triplets per epoch (150K offline + ~350K online)
-   - 510K+ RAG index entries (FAISS)
+   - 550K+ RAG index entries (FAISS)
    - 50K CoT instruction-decomposition pairs
-   - FAD reduction: up to 71.4% over strongest baseline
-   - Inference: 9.94s (8x faster than AudioEditor)
+   - FAD 3.27 (21.2% reduction over SmartDJ)
+   - Inference: 9.94s (8× faster than AudioEditor)
    ============================================================ */
 
 /* ---------- 6 Atomic Operations ----------
-   Each item provides: op, instruction, src, edited
-   Audio path convention: assets/audio/operations/<op>_<index>_{src|edited}.wav
+   Real audio samples from audio_vs directory.
+   Each item provides: op, instruction, src (source), edited (QuarkAudio-Edit output), gt (ground truth)
 ------------------------------------------------------------ */
 const OPERATION_DEMOS = [
   // ADD
   {
     op: 'add',
     opLabel: 'Add',
-    instruction: 'Add the sound of a dog barking in the background.',
-    src: 'assets/audio/operations/add_01_src.wav',
-    edited: 'assets/audio/operations/add_01_edited.wav',
-  },
-  {
-    op: 'add',
-    opLabel: 'Add',
-    instruction: 'Layer in ocean waves to create a beach ambience.',
-    src: 'assets/audio/operations/add_02_src.wav',
-    edited: 'assets/audio/operations/add_02_edited.wav',
+    instruction: 'Add the sound of Heartbeat singing.',
+    src: 'assets/audio_vs/0nZzsoe77Zk_ori.flac',
+    edited: 'assets/audio_vs/0nZzsoe77Zk__QuarkAudio-Edit.wav',
+    gt: 'assets/audio_vs/0nZzsoe77Zk_ground_truth.wav',
   },
 
   // REMOVE
   {
     op: 'remove',
     opLabel: 'Remove',
-    instruction: 'Remove the background traffic noise.',
-    src: 'assets/audio/operations/remove_01_src.wav',
-    edited: 'assets/audio/operations/remove_01_edited.wav',
-  },
-  {
-    op: 'remove',
-    opLabel: 'Remove',
-    instruction: 'Take out the drum beat while keeping the vocals.',
-    src: 'assets/audio/operations/remove_02_src.wav',
-    edited: 'assets/audio/operations/remove_02_edited.wav',
+    instruction: 'Remove the sound of Harmonica and singing.',
+    src: 'assets/audio_vs/-xYsfYZOI-Y_add_mUtztENAXKQ_000000_remove_ori.wav',
+    edited: 'assets/audio_vs/-xYsfYZOI-Y_add_mUtztENAXKQ_000000__QuarkAudio-Edit.wav',
+    gt: 'assets/audio_vs/-xYsfYZOI-Y_add_mUtztENAXKQ_000000_Ground%20Truth.wav',
   },
 
   // REPLACE
   {
     op: 'replace',
     opLabel: 'Replace',
-    instruction: 'Replace the alarm sound with a phone ringing.',
-    src: 'assets/audio/operations/replace_01_src.wav',
-    edited: 'assets/audio/operations/replace_01_edited.wav',
-  },
-  {
-    op: 'replace',
-    opLabel: 'Replace',
-    instruction: 'Swap the birds chirping for rain falling.',
-    src: 'assets/audio/operations/replace_02_src.wav',
-    edited: 'assets/audio/operations/replace_02_edited.wav',
+    instruction: 'Change the sound of Whistle blowing to the sound of Baby crying, Woman consoling.',
+    src: 'assets/audio_vs/-628WBAudFs_add_dZTXjShlFDo_000020_replace_ori.wav',
+    edited: 'assets/audio_vs/-628WBAudFs_add_dZTXjShlFDo_000020_QuarkAudio-Edit.wav',
+    gt: 'assets/audio_vs/-628WBAudFs_add_dZTXjShlFDo_000020_Ground%20Truth.wav',
   },
 
   // SPEED
   {
     op: 'speed',
     opLabel: 'Speed',
-    instruction: 'Speed up this recording to 1.5x tempo.',
-    src: 'assets/audio/operations/speed_01_src.wav',
-    edited: 'assets/audio/operations/speed_01_edited.wav',
-  },
-  {
-    op: 'speed',
-    opLabel: 'Speed',
-    instruction: 'Slow the track down to half speed.',
-    src: 'assets/audio/operations/speed_02_src.wav',
-    edited: 'assets/audio/operations/speed_02_edited.wav',
+    instruction: 'Slow down the sound of Coin dropping, Rustling.',
+    src: 'assets/audio_vs/_429zJA1qvc_add_68SWNa2TUPI_000102_speed2_ori.wav',
+    edited: 'assets/audio_vs/_429zJA1qvc_add_68SWNa2TUPI_000102_speed2_QuarkAudio-Edit.wav',
+    gt: 'assets/audio_vs/_429zJA1qvc_add_68SWNa2TUPI_000102_speed2_Ground_truth.wav',
   },
 
   // LOUDNESS
   {
     op: 'loud',
     opLabel: 'Loudness',
-    instruction: 'Make the overall volume noticeably quieter.',
-    src: 'assets/audio/operations/loud_01_src.wav',
-    edited: 'assets/audio/operations/loud_01_edited.wav',
-  },
-  {
-    op: 'loud',
-    opLabel: 'Loudness',
-    instruction: 'Boost the percussion by 6 dB.',
-    src: 'assets/audio/operations/loud_02_src.wav',
-    edited: 'assets/audio/operations/loud_02_edited.wav',
+    instruction: 'Turn up the volume of Livestock vocalizing.',
+    src: 'assets/audio_vs/_CZzm6jUxbo_add_5lLZXLW5knw_000004_low_LOUD_ori.wav',
+    edited: 'assets/audio_vs/_CZzm6jUxbo_add_5lLZXLW5knw_000004_low_QuarkAudio-Edit.wav',
+    gt: 'assets/audio_vs/_CZzm6jUxbo_add_5lLZXLW5knw_000004_low_Ground%20Truth.wav',
   },
 
   // ORDER
   {
     op: 'order',
     opLabel: 'Order',
-    instruction: 'Swap the first and second halves of the recording.',
-    src: 'assets/audio/operations/order_01_src.wav',
-    edited: 'assets/audio/operations/order_01_edited.wav',
-  },
-  {
-    op: 'order',
-    opLabel: 'Order',
-    instruction: 'Rearrange the events so the thunder comes before the rain.',
-    src: 'assets/audio/operations/order_02_src.wav',
-    edited: 'assets/audio/operations/order_02_edited.wav',
+    instruction: 'Swap the order of the two audio segments.',
+    src: 'assets/audio_vs/0LcRpzwseS4_000008_cat_J9wzev494_k_000105_order_ori.wav',
+    edited: 'assets/audio_vs/0LcRpzwseS4_000008_cat_J9wzev494_k_000105_our_QuarkAudio-Edit.wav',
+    gt: 'assets/audio_vs/0LcRpzwseS4_000008_cat_J9wzev494_k_000105_Ground%20Truth.wav',
   },
 ];
 
@@ -218,40 +182,85 @@ const SPEECH_DEMOS = [
 ];
 
 /* ---------- Baseline Comparison ----------
-   Each item pairs one source + instruction with outputs from multiple systems
+   Real multi-model comparison from audio_vs directory.
+   Each item pairs one source + instruction with outputs from multiple systems.
 ------------------------------------------------------------ */
 const BASELINE_DEMOS = [
   {
-    title: 'Sound-Event Replacement',
-    instruction: 'Replace the siren with birds chirping.',
-    src: 'assets/audio/baselines/baseline_01_src.wav',
+    title: 'Add: Heartbeat Singing',
+    instruction: 'Add the sound of Heartbeat singing.',
+    op: 'add',
+    src: 'assets/audio_vs/0nZzsoe77Zk_ori.flac',
+    gt: 'assets/audio_vs/0nZzsoe77Zk_ground_truth.wav',
     outputs: [
-      { name: 'AudioEditor',       path: 'assets/audio/baselines/baseline_01_audioeditor.wav' },
-      { name: 'SAO-Instruct',      path: 'assets/audio/baselines/baseline_01_sao.wav' },
-      { name: 'MMEdit',            path: 'assets/audio/baselines/baseline_01_mmedit.wav' },
-      { name: 'QuarkAudio-Edit',   path: 'assets/audio/baselines/baseline_01_ours.wav', ours: true },
+      { name: 'QuarkAudio-Edit',   path: 'assets/audio_vs/0nZzsoe77Zk__QuarkAudio-Edit.wav', ours: true },
+      { name: 'MMEdit',            path: 'assets/audio_vs/0nZzsoe77Zk_mmedit.wav' },
+      { name: 'AudioEditor',       path: 'assets/audio_vs/0nZzsoe77Zk_866e094e_AudioEditor.wav' },
+      { name: 'SAO-Instruct',      path: 'assets/audio_vs/0nZzsoe77Zk_SAO-Instruct.wav' },
+      { name: 'SmartDJ',           path: 'assets/audio_vs/0nZzsoe77Zk_smartdj_editor.wav' },
     ],
   },
   {
-    title: 'Event Removal',
-    instruction: 'Remove the background music while keeping the speech intact.',
-    src: 'assets/audio/baselines/baseline_02_src.wav',
+    title: 'Remove: Harmonica and Singing',
+    instruction: 'Remove the sound of Harmonica and singing.',
+    op: 'remove',
+    src: 'assets/audio_vs/-xYsfYZOI-Y_add_mUtztENAXKQ_000000_remove_ori.wav',
+    gt: 'assets/audio_vs/-xYsfYZOI-Y_add_mUtztENAXKQ_000000_Ground%20Truth.wav',
     outputs: [
-      { name: 'AudioEditor',       path: 'assets/audio/baselines/baseline_02_audioeditor.wav' },
-      { name: 'SAO-Instruct',      path: 'assets/audio/baselines/baseline_02_sao.wav' },
-      { name: 'MMEdit',            path: 'assets/audio/baselines/baseline_02_mmedit.wav' },
-      { name: 'QuarkAudio-Edit',   path: 'assets/audio/baselines/baseline_02_ours.wav', ours: true },
+      { name: 'QuarkAudio-Edit',   path: 'assets/audio_vs/-xYsfYZOI-Y_add_mUtztENAXKQ_000000__QuarkAudio-Edit.wav', ours: true },
+      { name: 'MMEdit',            path: 'assets/audio_vs/-xYsfYZOI-Y_add_mUtztENAXKQ_000000_MMedit.wav' },
+      { name: 'AudioEditor',       path: 'assets/audio_vs/-xYsfYZOI-Y_add_mUtztENAXKQ_000000_AudioEditor.wav' },
+      { name: 'SAO-Instruct',      path: 'assets/audio_vs/-xYsfYZOI-Y_add_mUtztENAXKQ_000000_SAO-Instruct.wav' },
+      { name: 'SmartDJ',           path: 'assets/audio_vs/-xYsfYZOI-Y_add_mUtztENAXKQ_000000_remove_smartdj_editor.wav' },
     ],
   },
   {
-    title: 'Complex Multi-Step Edit',
-    instruction: 'Make this recording sound like a quiet rainy evening.',
-    src: 'assets/audio/baselines/baseline_03_src.wav',
+    title: 'Replace: Whistle → Baby Crying',
+    instruction: 'Change the sound of Whistle blowing to the sound of Baby crying, Woman consoling.',
+    op: 'replace',
+    src: 'assets/audio_vs/-628WBAudFs_add_dZTXjShlFDo_000020_replace_ori.wav',
+    gt: 'assets/audio_vs/-628WBAudFs_add_dZTXjShlFDo_000020_Ground%20Truth.wav',
     outputs: [
-      { name: 'AudioEditor',       path: 'assets/audio/baselines/baseline_03_audioeditor.wav' },
-      { name: 'SAO-Instruct',      path: 'assets/audio/baselines/baseline_03_sao.wav' },
-      { name: 'MMEdit',            path: 'assets/audio/baselines/baseline_03_mmedit.wav' },
-      { name: 'QuarkAudio-Edit',   path: 'assets/audio/baselines/baseline_03_ours.wav', ours: true },
+      { name: 'QuarkAudio-Edit',   path: 'assets/audio_vs/-628WBAudFs_add_dZTXjShlFDo_000020_QuarkAudio-Edit.wav', ours: true },
+      { name: 'MMEdit',            path: 'assets/audio_vs/-628WBAudFs_add_dZTXjShlFDo_000020_MMedit.wav' },
+      { name: 'AudioEditor',       path: 'assets/audio_vs/-628WBAudFs_add_dZTXjShlFDo_000020_AudioEditor.wav' },
+      { name: 'SAO-Instruct',      path: 'assets/audio_vs/-628WBAudFs_add_dZTXjShlFDo_000020_SAO-Instruct.wav' },
+    ],
+  },
+  {
+    title: 'Speed: Slow Down Audio',
+    instruction: 'Slow down the sound of Coin dropping, Rustling.',
+    op: 'speed',
+    src: 'assets/audio_vs/_429zJA1qvc_add_68SWNa2TUPI_000102_speed2_ori.wav',
+    gt: 'assets/audio_vs/_429zJA1qvc_add_68SWNa2TUPI_000102_speed2_Ground_truth.wav',
+    outputs: [
+      { name: 'QuarkAudio-Edit',   path: 'assets/audio_vs/_429zJA1qvc_add_68SWNa2TUPI_000102_speed2_QuarkAudio-Edit.wav', ours: true },
+      { name: 'MMEdit',            path: 'assets/audio_vs/_429zJA1qvc_add_68SWNa2TUPI_000102_speed2_MMedit.wav' },
+      { name: 'SmartDJ',           path: 'assets/audio_vs/_429zJA1qvc_add_68SWNa2TUPI_000102_speed2_smartdj.wav' },
+    ],
+  },
+  {
+    title: 'Loudness: Volume Up',
+    instruction: 'Turn up the volume of Livestock vocalizing.',
+    op: 'loud',
+    src: 'assets/audio_vs/_CZzm6jUxbo_add_5lLZXLW5knw_000004_low_LOUD_ori.wav',
+    gt: 'assets/audio_vs/_CZzm6jUxbo_add_5lLZXLW5knw_000004_low_Ground%20Truth.wav',
+    outputs: [
+      { name: 'QuarkAudio-Edit',   path: 'assets/audio_vs/_CZzm6jUxbo_add_5lLZXLW5knw_000004_low_QuarkAudio-Edit.wav', ours: true },
+      { name: 'MMEdit',            path: 'assets/audio_vs/_CZzm6jUxbo_add_5lLZXLW5knw_000004_low_MMedit.wav' },
+      { name: 'SmartDJ',           path: 'assets/audio_vs/_CZzm6jUxbo_add_5lLZXLW5knw_000004_low_LOUD_smartdj.wav' },
+    ],
+  },
+  {
+    title: 'Order: Swap Segments',
+    instruction: 'Swap the order of the two audio segments.',
+    op: 'order',
+    src: 'assets/audio_vs/0LcRpzwseS4_000008_cat_J9wzev494_k_000105_order_ori.wav',
+    gt: 'assets/audio_vs/0LcRpzwseS4_000008_cat_J9wzev494_k_000105_Ground%20Truth.wav',
+    outputs: [
+      { name: 'QuarkAudio-Edit',   path: 'assets/audio_vs/0LcRpzwseS4_000008_cat_J9wzev494_k_000105_our_QuarkAudio-Edit.wav', ours: true },
+      { name: 'MMEdit',            path: 'assets/audio_vs/0LcRpzwseS4_000008_cat_J9wzev494_k_000105_MMedit.wav' },
+      { name: 'SmartDJ',           path: 'assets/audio_vs/0LcRpzwseS4_000008_cat_J9wzev494_k_000105_order_smartdj.wav' },
     ],
   },
 ];

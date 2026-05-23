@@ -29,6 +29,17 @@
   }
 
   function buildDemoCard(demo) {
+    const gtSlot = demo.gt ? `
+          <div class="audio-slot">
+            <div class="slot-label" style="color: #16a34a;">
+              <i class="bi bi-check-circle-fill"></i> Ground Truth
+            </div>
+            <audio controls preload="none">
+              <source src="${demo.gt}" type="audio/wav" />
+            </audio>
+          </div>
+    ` : '';
+
     return `
       <div class="demo-card" data-op="${demo.op}">
         <div class="demo-header">
@@ -42,16 +53,15 @@
             </div>
             <audio controls preload="none">
               <source src="${demo.src}" type="audio/wav" />
-              Your browser does not support the audio element.
             </audio>
           </div>
+          ${gtSlot}
           <div class="audio-slot">
             <div class="slot-label edited">
-              <i class="bi bi-stars"></i> Edited
+              <i class="bi bi-stars"></i> QuarkAudio-Edit
             </div>
             <audio controls preload="none">
               <source src="${demo.edited}" type="audio/wav" />
-              Your browser does not support the audio element.
             </audio>
           </div>
         </div>
@@ -196,6 +206,17 @@
         `;
       }).join('');
 
+      const gtCell = demo.gt ? `
+          <div class="baseline-cell" style="border-bottom: 1px solid var(--c-border); background: #f0fdf4;">
+            <div class="slot-label" style="color: #16a34a;">
+              <i class="bi bi-check-circle-fill"></i> Ground Truth
+            </div>
+            <audio controls preload="none">
+              <source src="${demo.gt}" type="audio/wav" />
+            </audio>
+          </div>
+      ` : '';
+
       return `
         <div class="baseline-row">
           <div class="baseline-header">
@@ -204,6 +225,7 @@
             <span style="color:var(--c-text-muted); font-weight:500;">
               &ldquo;${escapeHtml(demo.instruction)}&rdquo;
             </span>
+            ${demo.op ? '<span class="op-tag op-' + demo.op + '" style="margin-left:8px;">' + capitalize(demo.op) + '</span>' : ''}
           </div>
           <div class="baseline-cell" style="border-bottom: 1px solid var(--c-border); background: var(--c-bg-alt);">
             <div class="slot-label src">
@@ -213,6 +235,7 @@
               <source src="${demo.src}" type="audio/wav" />
             </audio>
           </div>
+          ${gtCell}
           <div class="baseline-grid">
             ${outputCells}
           </div>
