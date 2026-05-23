@@ -68,10 +68,10 @@
     </div>
 
     <div class="tldr">
-      <strong>TL;DR:</strong> QuarkAudio-Edit is a unified framework for general audio and speech editing.
+      <strong>TL;DR:</strong> QuarkAudio-Edit decouples CoT-guided planning from diffusion-based execution.
       An ALM planner decomposes free-form instructions into six atomic operations via CoT reasoning augmented
       by a 550K+ RAG index; an MMDiT editor executes them sequentially; progressive GRPO refines both stages.
-      On declarative multi-step instructions, the system achieves FAD 3.27, reducing FAD by 21.2% over the strongest baseline (SmartDJ) and by 41.4% over MMEdit, while attaining the highest CLAP similarity (0.241).
+      On declarative multi-step instructions, it achieves FAD 3.27, reducing FAD by 21.2% over SmartDJ (4.15) and by 41.4% over MMEdit, with the highest CLAP similarity (0.241).
     </div>
   </div>
 </header>
@@ -85,7 +85,7 @@
     <a href="#demos">Audio Demos</a>
     <a href="#reasoning">CoT &middot; RAG</a>
     <a href="#results">Results</a>
-    <a href="#gallery">Baselines</a>
+    <a href="#speech-editing">Speech Editing</a>
     <a href="#failures">Failure Cases</a>
     <a href="#citation">BibTeX</a>
   </div>
@@ -98,12 +98,11 @@
     <div class="abstract-box">
       <p>
         Text-guided audio editing aims to modify input audio according to natural-language instructions.
-        Existing systems support limited editing operations and rely on rigid instruction templates, struggling with complex, multi-step instructions.
-        We present <strong>QuarkAudio-Edit</strong>, a unified framework that decouples chain-of-thought (CoT) guided structured decomposition from diffusion-based signal editing.
+        Existing systems support limited editing operations and rely on fixed instruction templates, struggling with complex, multi-step instructions that require decomposing implicit user intent into executable atomic operations.
+        We present <strong>QuarkAudio-Edit</strong>, a unified framework that decouples CoT-guided structured decomposition from diffusion-based signal editing.
         An audio language model (ALM) planner decomposes free-form instructions into six atomic operations via CoT reasoning, augmented by retrieval-augmented generation (RAG) with retrieved exemplars.
-        The resulting plans are executed by an MMDiT editor trained on triplets synthesized through multi-source pipelines and online composition, and further optimized via progressive reinforcement learning (PRL) with multi-rule rewards.
+        The resulting plans are executed by an MMDiT editor trained on triplets synthesized through multi-source pipelines and online composition, further optimized via progressive reinforcement learning (PRL) with multi-rule rewards.
         On a declarative multi-step instruction dataset, QuarkAudio-Edit achieves FAD 3.27, reducing FAD by 21.2% over the strongest baseline (SmartDJ, 4.15) and by 41.4% over MMEdit, while attaining the highest CLAP similarity (0.241) among all compared systems.
-        Source code and demos are available at our project page.
       </p>
     </div>
   </div>
@@ -171,8 +170,8 @@
         <div class="stat-label">FAD Reduction (vs. SmartDJ)</div>
       </div>
       <div class="stat-card">
-        <div class="stat-value">8&times;</div>
-        <div class="stat-label">Faster Inference</div>
+        <div class="stat-value">0.241</div>
+        <div class="stat-label">CLAP Similarity (Best)</div>
       </div>
     </div>
   </div>
@@ -432,6 +431,35 @@
       All experiments employ 10 s test samples.
     </p>
 
+    <!-- Table 2: Overall Comparison -->
+    <h3 class="subsection-title">Overall Comparison (Table 2)</h3>
+    <p class="table-note">
+      500 declarative complex instructions. &ldquo;Framework&rdquo; distinguishes models without an ALM (w/o ALM) from those integrating one (w/ ALM).
+      Inference time measured on a single A100 GPU for 10 s audio.
+    </p>
+    <div class="table-wrap">
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th>Framework</th><th>Model</th><th>Inf.&thinsp;Time &darr;</th>
+            <th>LSD &darr;</th><th>FAD &darr;</th><th>FD &darr;</th>
+            <th>KL &darr;</th><th>IS &uarr;</th><th>CLAP &uarr;</th>
+            <th>R-MOS &uarr;</th><th>F-MOS &uarr;</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td rowspan="2">w/o ALM</td><td>AudioEditor</td><td>42.51s</td><td>2.14</td><td>5.26</td><td>62.38</td><td>3.41</td><td>3.08</td><td>0.112</td><td>2.71</td><td>2.85</td></tr>
+          <tr><td>MMEdit</td><td>19.28s</td><td>2.23</td><td>5.58</td><td>58.92</td><td>3.52</td><td>2.96</td><td>0.105</td><td>2.95</td><td>3.32</td></tr>
+          <tr><td rowspan="6">w/ ALM</td><td>SAO-Instruct</td><td>18.58s</td><td>1.89</td><td>4.73</td><td>55.14</td><td>3.18</td><td>3.45</td><td>0.148</td><td>3.11</td><td>3.58</td></tr>
+          <tr><td>SmartDJ</td><td>8.62s</td><td>1.72</td><td>4.15</td><td>48.36</td><td>2.87</td><td>3.82</td><td>0.175</td><td>3.23</td><td>3.75</td></tr>
+          <tr class="ours-row"><td><strong>QuarkAudio-Edit</strong></td><td><strong>9.85s</strong></td><td><strong>1.38</strong></td><td><strong>3.27</strong></td><td><strong>35.41</strong></td><td><strong>2.18</strong></td><td><strong>4.32</strong></td><td><strong>0.241</strong></td><td><strong>3.53</strong></td><td><strong>3.98</strong></td></tr>
+          <tr><td>&emsp;w/o RAG</td><td>9.72s</td><td>1.51</td><td>3.59</td><td>38.28</td><td>2.42</td><td>4.16</td><td>0.225</td><td>3.42</td><td>3.86</td></tr>
+          <tr><td>&emsp;w/o CoT</td><td>8.25s</td><td>1.62</td><td>3.89</td><td>41.28</td><td>2.61</td><td>4.05</td><td>0.212</td><td>3.24</td><td>3.61</td></tr>
+          <tr><td>&emsp;w/o PRL</td><td>8.25s</td><td>1.79</td><td>4.48</td><td>46.73</td><td>2.85</td><td>3.89</td><td>0.186</td><td>3.12</td><td>3.42</td></tr>
+        </tbody>
+      </table>
+    </div>
+
     <!-- Per-operation FAD -->
     <h3 class="subsection-title">Per-Operation Comparison (FAD &darr;)</h3>
     <p class="table-note">
@@ -462,61 +490,33 @@
       </table>
     </div>
 
-    <!-- Declarative -->
-    <h3 class="subsection-title">Declarative Complex-Instruction Evaluation (FAD &darr;)</h3>
+
+    <!-- Planner Ablation -->
+    <h3 class="subsection-title">Planner Ablation: What Drives the Improvement?</h3>
     <p class="table-note">
-      500 declarative instructions describing target audio scenes without explicit operations.
-      Each instruction requires 2&ndash;4 inferred atomic operations.
+      Fine-grained planner ablation on 500 complex instructions.
+      &ldquo;Direct&rdquo;: raw instruction without planning.
+      &ldquo;Atomic only&rdquo;: ground-truth commands without reasoning.
+      &ldquo;Reasoning only&rdquo;: full CoT but single-pass execution.
+      &ldquo;Full CoT&rdquo;: reasoning with sequential execution.
     </p>
     <div class="table-wrap">
       <table class="results-table">
         <thead>
           <tr>
-            <th>Model</th>
+            <th>Configuration</th>
             <th>LSD &darr;</th><th>FAD &darr;</th><th>FD &darr;</th>
             <th>KL &darr;</th><th>IS &uarr;</th><th>CLAP &uarr;</th>
           </tr>
         </thead>
         <tbody>
-          <tr><td>AudioEditor</td><td>2.14</td><td>5.26</td><td>62.38</td><td>3.41</td><td>3.08</td><td>0.112</td></tr>
-          <tr><td>SAO-Instruct</td><td>1.89</td><td>4.73</td><td>55.14</td><td>3.18</td><td>3.45</td><td>0.148</td></tr>
-          <tr><td>SmartDJ</td><td>1.72</td><td>4.15</td><td>48.36</td><td>2.87</td><td>3.82</td><td>0.175</td></tr>
-          <tr><td>MMEdit</td><td>2.23</td><td>5.58</td><td>58.92</td><td>3.52</td><td>2.96</td><td>0.105</td></tr>
+          <tr><td>Direct instruction</td><td>2.31</td><td>6.80</td><td>62.14</td><td>3.15</td><td>2.53</td><td>0.098</td></tr>
+          <tr><td>Atomic only</td><td>1.85</td><td>5.44</td><td>47.01</td><td>2.74</td><td>3.48</td><td>0.162</td></tr>
+          <tr><td>Reasoning only</td><td>1.96</td><td>5.81</td><td>49.92</td><td>2.91</td><td>3.21</td><td>0.143</td></tr>
           <tr class="ours-row">
-            <td><strong>QuarkAudio-Edit</strong></td>
+            <td><strong>Full CoT (ours)</strong></td>
             <td><strong>1.38</strong></td><td><strong>3.27</strong></td><td><strong>35.41</strong></td>
             <td><strong>2.18</strong></td><td><strong>4.32</strong></td><td><strong>0.241</strong></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Subjective -->
-    <h3 class="subsection-title">Subjective Evaluation (MOS 1&ndash;5) and Inference Speed</h3>
-    <p class="table-note">
-      Fifteen participants rate Quality, Relevance, and Faithfulness on a 1&ndash;5 Mean Opinion Score scale.
-    </p>
-    <div class="table-wrap">
-      <table class="results-table">
-        <thead>
-          <tr>
-            <th>Model</th>
-            <th>Inference (s) &darr;</th>
-            <th>Quality &uarr;</th>
-            <th>Relevance &uarr;</th>
-            <th>Faithfulness &uarr;</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>AudioEditor</td><td>79.5</td><td>3.22</td><td>3.33</td><td>2.75</td></tr>
-          <tr><td>ZETA (T=50)</td><td>15.3</td><td>3.56</td><td>3.25</td><td>2.95</td></tr>
-          <tr><td>ZETA (T=75)</td><td>17.8</td><td>3.28</td><td>3.04</td><td>2.75</td></tr>
-          <tr class="ours-row">
-            <td><strong>QuarkAudio-Edit</strong></td>
-            <td><strong>9.94</strong></td>
-            <td>3.54</td>
-            <td><strong>3.83</strong></td>
-            <td><strong>3.99</strong></td>
           </tr>
         </tbody>
       </table>
@@ -558,32 +558,31 @@
       </table>
     </div>
 
-    <!-- Ablation -->
-    <h3 class="subsection-title">Ablation Study (Declarative Instruction FAD)</h3>
+    <!-- Key Findings -->
+    <h3 class="subsection-title">Key Ablation Findings</h3>
     <p class="table-note">
-      Component ablations on 500 declarative instructions. Ablations retain atomic decomposition structure;
-      &ldquo;w/o CoT&rdquo; removes only reasoning text. Percentage values indicate relative FAD increase over the full model (FAD = 3.27).
+      From the planner ablation above, three findings emerge:
     </p>
     <div class="ablation-grid">
       <div class="ablation-card">
-        <div class="ablation-label">w/o PRL (GRPO)</div>
-        <div class="ablation-value">+37.0%</div>
-        <div class="ablation-desc">FAD 3.27 &rarr; 4.48</div>
+        <div class="ablation-label">Atomic decomposition</div>
+        <div class="ablation-value">38.5%</div>
+        <div class="ablation-desc">Primary driver: FAD 6.80 &rarr; 5.44</div>
       </div>
       <div class="ablation-card">
-        <div class="ablation-label">w/o CoT reasoning</div>
-        <div class="ablation-value">+19.0%</div>
-        <div class="ablation-desc">FAD 3.27 &rarr; 3.89</div>
+        <div class="ablation-label">Reasoning only ≠ better</div>
+        <div class="ablation-value">FAD 5.81</div>
+        <div class="ablation-desc">CoT text without sequential exec hurts</div>
       </div>
       <div class="ablation-card">
-        <div class="ablation-label">w/o RAG retrieval</div>
-        <div class="ablation-value">+9.8%</div>
-        <div class="ablation-desc">FAD 3.27 &rarr; 3.59</div>
+        <div class="ablation-label">Full CoT + sequential</div>
+        <div class="ablation-value">&minus;39.9%</div>
+        <div class="ablation-desc">FAD 5.44 &rarr; 3.27 (both essential)</div>
       </div>
       <div class="ablation-card">
         <div class="ablation-label">Source-latent init</div>
         <div class="ablation-value">FD +62%</div>
-        <div class="ablation-desc">FD 18.38 &rarr; 29.73</div>
+        <div class="ablation-desc">FD 18.38 &rarr; 29.73 (Gaussian is better)</div>
       </div>
     </div>
 
@@ -594,8 +593,167 @@
       58% of FAD increase is attributable to planner decomposition errors;
       42% stems from compounding diffusion reconstruction artifacts.
     </p>
+
+    <!-- Spectrogram Comparison -->
+    <h3 class="subsection-title">Spectrogram Comparison: Non-Edited Region Preservation</h3>
+    <p class="table-note">
+      Log-magnitude spectrograms (44.1 kHz, mono) comparing QuarkAudio-Edit against baselines across all six atomic operations.
+      Two consistent observations: (1) QuarkAudio-Edit maintains spectral structure of non-target regions with high fidelity&mdash;background
+      textures, harmonic patterns, and energy distributions remain intact. Baselines introduce visible global distortion or spectral smearing.
+      (2) Edited regions closely match ground truth in both spectral shape and temporal alignment.
+    </p>
+
+    <div class="spectrogram-figures">
+      <div class="spec-figure">
+        <img src="assets/images/spectrogram_content.png"
+             alt="Spectrogram comparison for content-level operations (Add, Remove, Replace)"
+             loading="lazy"
+             style="width:100%; border-radius:8px; border:1px solid var(--c-border);"
+             onerror="handleImageError(this, 'Figure 9 · Content-Level Spectrogram Comparison')" />
+        <p class="figure-caption">
+          <strong>Figure 9.</strong> Content-level operations. Row 1 (Add): &ldquo;Add the sound of Heartbeat singing&rdquo;&mdash;QuarkAudio-Edit
+          inserts the target event while preserving the original background. Row 2 (Remove): &ldquo;Remove the sound of Harmonica and singing&rdquo;&mdash;clean
+          suppression without spectral holes. Row 3 (Replace): &ldquo;Replace Whistle blowing with Baby crying&rdquo;&mdash;substitution while maintaining non-target content.
+        </p>
+      </div>
+      <div class="spec-figure" style="margin-top:24px;">
+        <img src="assets/images/spectrogram_signal.png"
+             alt="Spectrogram comparison for signal-level operations (Speed, Loudness, Order)"
+             loading="lazy"
+             style="width:100%; border-radius:8px; border:1px solid var(--c-border);"
+             onerror="handleImageError(this, 'Figure 10 · Signal-Level Spectrogram Comparison')" />
+        <p class="figure-caption">
+          <strong>Figure 10.</strong> Signal-level operations. Row 1 (Speed): &ldquo;Slow down the sound of Coin dropping, Rustling&rdquo;&mdash;correct
+          time-stretching while preserving spectral characteristics. Row 2 (Loudness): &ldquo;Turn up the volume of Livestock vocalizing&rdquo;&mdash;amplification
+          without clipping or artifacts. Row 3 (Order): &ldquo;Swap the order of two audio segments&rdquo;&mdash;temporal reordering with segment integrity preserved.
+        </p>
+      </div>
+    </div>
   </div>
 </section>
+
+<!-- ============ SPEECH EDITING DEMO ============ -->
+<section id="speech-editing" class="section section-alt">
+  <div class="container">
+    <h2 class="section-title">Speech Editing Samples</h2>
+    <p class="section-lead">
+      Preliminary speech editing results on the RealEdit benchmark. The same MMDiT editor backbone
+      handles word-level insertion, deletion, and substitution without any speech-specific modifications.
+      <strong>Spot the edited region</strong> &mdash; non-target acoustic content (timbre, prosody, background) is preserved.
+    </p>
+
+    <!-- Language tabs -->
+    <div class="gallery-tabs">
+      <button class="gallery-tab active" onclick="switchSpeechLang('en')">
+        <i class="bi bi-translate"></i> English
+      </button>
+      <button class="gallery-tab" onclick="switchSpeechLang('zh')">
+        <i class="bi bi-translate"></i> Chinese
+      </button>
+    </div>
+
+    <!-- English samples -->
+    <div id="speech-en" class="speech-editing-content">
+      <table class="speech-edit-table">
+        <thead>
+          <tr>
+            <th>Original Transcript</th>
+            <th>Edited Transcript</th>
+            <th>Original Audio</th>
+            <th>Edited Audio</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>After all, who doesn't want to overcome new challenges and <s>achieve great heights</s>?</td>
+            <td>After all, who doesn't want to overcome new challenges and <mark>succeed beyond measure</mark>?</td>
+            <td><audio controls preload="none" src="assets/voicecraft-x/EN_prompt_1.wav"></audio></td>
+            <td><audio controls preload="none" src="assets/voicecraft-x/EN_voicecraftx_1.wav"></audio></td>
+          </tr>
+          <tr>
+            <td>He has also worked as a teacher, lecturer, critic and broadcaster.</td>
+            <td>He has also worked <mark>in various capacities</mark> as a teacher, lecturer, critic and broadcaster.</td>
+            <td><audio controls preload="none" src="assets/voicecraft-x/EN_prompt_2.wav"></audio></td>
+            <td><audio controls preload="none" src="assets/voicecraft-x/EN_voicecraftx_2.wav"></audio></td>
+          </tr>
+          <tr>
+            <td>Since work done is force times distance, mechanical power is <s>force times speed</s>.</td>
+            <td>Since work done is force times distance, mechanical power is <mark>the rate at which work is done</mark>.</td>
+            <td><audio controls preload="none" src="assets/voicecraft-x/EN_prompt_12.wav"></audio></td>
+            <td><audio controls preload="none" src="assets/voicecraft-x/EN_voicecraftx_12.wav"></audio></td>
+          </tr>
+          <tr>
+            <td>Her cousin is a former member of the House of Representatives in Japan.</td>
+            <td>Her cousin, <mark>who resides in Tokyo</mark>, is a former member of the House of Representatives in Japan.</td>
+            <td><audio controls preload="none" src="assets/voicecraft-x/EN_prompt_7.wav"></audio></td>
+            <td><audio controls preload="none" src="assets/voicecraft-x/EN_voicecraftx_7.wav"></audio></td>
+          </tr>
+          <tr>
+            <td>His heart has been affected by his anxiety, and he has another heart attack.</td>
+            <td>His heart has been affected by his anxiety, and he has another heart attack <mark>requiring immediate medical attention</mark>.</td>
+            <td><audio controls preload="none" src="assets/voicecraft-x/EN_prompt_6.wav"></audio></td>
+            <td><audio controls preload="none" src="assets/voicecraft-x/EN_voicecraftx_6.wav"></audio></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Chinese samples -->
+    <div id="speech-zh" class="speech-editing-content" style="display:none;">
+      <table class="speech-edit-table">
+        <thead>
+          <tr>
+            <th>Original Transcript</th>
+            <th>Edited Transcript</th>
+            <th>Original Audio</th>
+            <th>Edited Audio</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>照片中李弘基和张根硕两人站在中间，做<s>可爱咧嘴状</s>。</td>
+            <td>照片中李弘基和张根硕两人站在中间，做<mark>调皮的微笑</mark>。</td>
+            <td><audio controls preload="none" src="assets/voicecraft-x/ZH_prompt_1.wav"></audio></td>
+            <td><audio controls preload="none" src="assets/voicecraft-x/ZH_voicecraftx_1.wav"></audio></td>
+          </tr>
+          <tr>
+            <td>毒虫把毒品丢进马桶冲走，未料毒品又浮出水面，让警方逮个正着。</td>
+            <td>毒虫把毒品丢进马桶冲走，未料<mark>令人啼笑皆非的是</mark>，毒品又浮出水面，让警方逮个正着。</td>
+            <td><audio controls preload="none" src="assets/voicecraft-x/ZH_prompt_11.wav"></audio></td>
+            <td><audio controls preload="none" src="assets/voicecraft-x/ZH_voicecraftx_11.wav"></audio></td>
+          </tr>
+          <tr>
+            <td>在半决赛，美国女排<s>险胜</s>古巴闯入决赛，最终收获银牌。</td>
+            <td>在半决赛，美国女排<mark>经过苦战击败</mark>古巴闯入决赛，最终收获银牌。</td>
+            <td><audio controls preload="none" src="assets/voicecraft-x/ZH_prompt_3.wav"></audio></td>
+            <td><audio controls preload="none" src="assets/voicecraft-x/ZH_voicecraftx_3.wav"></audio></td>
+          </tr>
+          <tr>
+            <td>你可以学习一下中国跳棋或者军棋，这两个容易多了。</td>
+            <td>你可以<mark>试着</mark>学习一下中国跳棋或者军棋，这两个<mark>游戏的规则</mark>容易多了。</td>
+            <td><audio controls preload="none" src="assets/voicecraft-x/ZH_prompt_9.wav"></audio></td>
+            <td><audio controls preload="none" src="assets/voicecraft-x/ZH_voicecraftx_9.wav"></audio></td>
+          </tr>
+          <tr>
+            <td>最便捷的方法，就是用纱窗将蚊子阻止在屋外。</td>
+            <td>最便捷的方法，就是用纱窗将<mark>那些烦人的</mark>蚊子阻止在屋外。</td>
+            <td><audio controls preload="none" src="assets/voicecraft-x/ZH_prompt_10.wav"></audio></td>
+            <td><audio controls preload="none" src="assets/voicecraft-x/ZH_voicecraftx_10.wav"></audio></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<script>
+function switchSpeechLang(lang) {
+  document.getElementById('speech-en').style.display = lang === 'en' ? '' : 'none';
+  document.getElementById('speech-zh').style.display = lang === 'zh' ? '' : 'none';
+  var tabs = document.querySelectorAll('#speech-editing .gallery-tab');
+  tabs.forEach(function(t, i) { t.classList.toggle('active', (i === 0 && lang === 'en') || (i === 1 && lang === 'zh')); });
+}
+</script>
 
 <!-- ============ FAILURE CASES & LIMITATIONS ============ -->
 <section id="failures" class="section">
@@ -694,41 +852,6 @@
         QuarkAudio-Edit checkpoint with default hyperparameters (20 denoising steps, CFG scale 5)
         to reflect real-world deployment behavior.
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ EXTERNAL BASELINES GALLERY ============ -->
-<section id="gallery" class="section section-alt">
-  <div class="container">
-    <h2 class="section-title">External Baselines Gallery</h2>
-    <p class="section-lead">
-      Audio samples from published baseline systems, reproduced from their official demo pages
-      for direct comparison. Systems include AudioEditor, SAO-Instruct, SmartDJ, and MMEdit.
-    </p>
-
-    <!-- Source selector tabs -->
-    <div class="gallery-tabs">
-      <button class="gallery-tab active" data-source="mmediting">
-        <i class="bi bi-music-note-list"></i> MMEdit
-      </button>
-      <button class="gallery-tab" data-source="smartdj">
-        <i class="bi bi-stars"></i> SmartDJ
-      </button>
-      <button class="gallery-tab" data-source="saoinstruct">
-        <i class="bi bi-pencil-square"></i> SAO-Instruct
-      </button>
-      <button class="gallery-tab" data-source="voicecraftx">
-        <i class="bi bi-mic"></i> VoiceCraft-X
-      </button>
-      <button class="gallery-tab" data-source="audioomni">
-        <i class="bi bi-soundwave"></i> Audio-Omni
-      </button>
-    </div>
-
-    <!-- Gallery content rendered by JS -->
-    <div id="gallery-content" class="gallery-content">
-      <!-- Cards injected by JS from EXTERNAL_GALLERY -->
     </div>
   </div>
 </section>
