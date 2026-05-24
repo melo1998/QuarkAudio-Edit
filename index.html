@@ -85,7 +85,6 @@
     <a href="#demos">Audio Demos</a>
     <a href="#reasoning">CoT &middot; RAG</a>
     <a href="#results">Results</a>
-    <a href="#speech-editing">Speech Editing</a>
     <a href="#failures">Failure Cases</a>
     <a href="#citation">BibTeX</a>
   </div>
@@ -304,8 +303,112 @@
 
     <!-- Tab: Speech -->
     <div class="tab-panel" id="tab-speech">
-      <div class="demo-grid" id="speech-grid">
-        <!-- Cards injected by JS -->
+      <p class="section-lead" style="margin-bottom:18px;">
+        Cross-domain speech editing results on the RealEdit benchmark. The same MMDiT editor backbone
+        handles word-level insertion, deletion, and substitution without any speech-specific modifications.
+        <strong>Spot the edited region</strong> &mdash; non-target acoustic content (timbre, prosody, background) is preserved.
+      </p>
+
+      <!-- Language tabs -->
+      <div class="gallery-tabs">
+        <button class="gallery-tab active" onclick="switchSpeechLang('en')">
+          <i class="bi bi-translate"></i> English
+        </button>
+        <button class="gallery-tab" onclick="switchSpeechLang('zh')">
+          <i class="bi bi-translate"></i> Chinese
+        </button>
+      </div>
+
+      <!-- English samples -->
+      <div id="speech-en" class="speech-editing-content">
+        <table class="speech-edit-table">
+          <thead>
+            <tr>
+              <th>Original Transcript</th>
+              <th>Edited Transcript</th>
+              <th>Original Audio</th>
+              <th>Edited Audio</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>After all, who doesn't want to overcome new challenges and <s>achieve great heights</s>?</td>
+              <td>After all, who doesn't want to overcome new challenges and <mark>succeed beyond measure</mark>?</td>
+              <td><audio controls preload="none" src="assets/voicecraft-x/EN_prompt_1.wav"></audio></td>
+              <td><audio controls preload="none" src="assets/voicecraft-x/EN_voicecraftx_1.wav"></audio></td>
+            </tr>
+            <tr>
+              <td>He has also worked as a teacher, lecturer, critic and broadcaster.</td>
+              <td>He has also worked <mark>in various capacities</mark> as a teacher, lecturer, critic and broadcaster.</td>
+              <td><audio controls preload="none" src="assets/voicecraft-x/EN_prompt_2.wav"></audio></td>
+              <td><audio controls preload="none" src="assets/voicecraft-x/EN_voicecraftx_2.wav"></audio></td>
+            </tr>
+            <tr>
+              <td>Since work done is force times distance, mechanical power is <s>force times speed</s>.</td>
+              <td>Since work done is force times distance, mechanical power is <mark>the rate at which work is done</mark>.</td>
+              <td><audio controls preload="none" src="assets/voicecraft-x/EN_prompt_12.wav"></audio></td>
+              <td><audio controls preload="none" src="assets/voicecraft-x/EN_voicecraftx_12.wav"></audio></td>
+            </tr>
+            <tr>
+              <td>Her cousin is a former member of the House of Representatives in Japan.</td>
+              <td>Her cousin, <mark>who resides in Tokyo</mark>, is a former member of the House of Representatives in Japan.</td>
+              <td><audio controls preload="none" src="assets/voicecraft-x/EN_prompt_7.wav"></audio></td>
+              <td><audio controls preload="none" src="assets/voicecraft-x/EN_voicecraftx_7.wav"></audio></td>
+            </tr>
+            <tr>
+              <td>His heart has been affected by his anxiety, and he has another heart attack.</td>
+              <td>His heart has been affected by his anxiety, and he has another heart attack <mark>requiring immediate medical attention</mark>.</td>
+              <td><audio controls preload="none" src="assets/voicecraft-x/EN_prompt_6.wav"></audio></td>
+              <td><audio controls preload="none" src="assets/voicecraft-x/EN_voicecraftx_6.wav"></audio></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Chinese samples -->
+      <div id="speech-zh" class="speech-editing-content" style="display:none;">
+        <table class="speech-edit-table">
+          <thead>
+            <tr>
+              <th>Original Transcript</th>
+              <th>Edited Transcript</th>
+              <th>Original Audio</th>
+              <th>Edited Audio</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>照片中李弘基和张根硕两人站在中间，做<s>可爱咧嘴状</s>。</td>
+              <td>照片中李弘基和张根硕两人站在中间，做<mark>调皮的微笑</mark>。</td>
+              <td><audio controls preload="none" src="assets/voicecraft-x/ZH_prompt_1.wav"></audio></td>
+              <td><audio controls preload="none" src="assets/voicecraft-x/ZH_voicecraftx_1.wav"></audio></td>
+            </tr>
+            <tr>
+              <td>毒虫把毒品丢进马桶冲走，未料毒品又浮出水面，让警方逮个正着。</td>
+              <td>毒虫把毒品丢进马桶冲走，未料<mark>令人啼笑皆非的是</mark>，毒品又浮出水面，让警方逮个正着。</td>
+              <td><audio controls preload="none" src="assets/voicecraft-x/ZH_prompt_11.wav"></audio></td>
+              <td><audio controls preload="none" src="assets/voicecraft-x/ZH_voicecraftx_11.wav"></audio></td>
+            </tr>
+            <tr>
+              <td>在半决赛，美国女排<s>险胜</s>古巴闯入决赛，最终收获银牌。</td>
+              <td>在半决赛，美国女排<mark>经过苦战击败</mark>古巴闯入决赛，最终收获银牌。</td>
+              <td><audio controls preload="none" src="assets/voicecraft-x/ZH_prompt_3.wav"></audio></td>
+              <td><audio controls preload="none" src="assets/voicecraft-x/ZH_voicecraftx_3.wav"></audio></td>
+            </tr>
+            <tr>
+              <td>你可以学习一下中国跳棋或者军棋，这两个容易多了。</td>
+              <td>你可以<mark>试着</mark>学习一下中国跳棋或者军棋，这两个<mark>游戏的规则</mark>容易多了。</td>
+              <td><audio controls preload="none" src="assets/voicecraft-x/ZH_prompt_9.wav"></audio></td>
+              <td><audio controls preload="none" src="assets/voicecraft-x/ZH_voicecraftx_9.wav"></audio></td>
+            </tr>
+            <tr>
+              <td>最便捷的方法，就是用纱窗将蚊子阻止在屋外。</td>
+              <td>最便捷的方法，就是用纱窗将<mark>那些烦人的</mark>蚊子阻止在屋外。</td>
+              <td><audio controls preload="none" src="assets/voicecraft-x/ZH_prompt_10.wav"></audio></td>
+              <td><audio controls preload="none" src="assets/voicecraft-x/ZH_voicecraftx_10.wav"></audio></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
@@ -333,13 +436,13 @@
         <div class="bubble user-bubble">
           <div class="bubble-label"><i class="bi bi-person-fill"></i> User Instruction</div>
           <div class="bubble-content">
-            "Make this sound like a quiet park on a Sunday morning."
+            "Immerse this in the soundscape of a street demonstration echoing through city blocks."
           </div>
         </div>
         <div class="bubble audio-bubble">
           <div class="bubble-label"><i class="bi bi-soundwave"></i> Source Audio</div>
           <div class="bubble-content">
-            <em>Detected events:</em> car engines, distant siren, footsteps on pavement.
+            <em>Detected events:</em> motorcycle engine, human speech, police siren.
           </div>
         </div>
       </div>
@@ -351,24 +454,24 @@
           <div class="step-body">
             <div class="retrieved-exemplar">
               <div class="exemplar-header">
-                <span class="sim-score">sim 0.87</span>
-                <span class="exemplar-title">"Turn this into a peaceful garden setting."</span>
+                <span class="sim-score">sim 0.89</span>
+                <span class="exemplar-title">"Transform this into a protest march atmosphere."</span>
               </div>
               <div class="exemplar-decomp">
-                <span class="op-tag op-remove">Remove</span> machinery noise &rarr;
-                <span class="op-tag op-add">Add</span> bird song &rarr;
-                <span class="op-tag op-loud">Loudness</span> &minus;2 dB
+                <span class="op-tag op-loud">Loudness</span> siren +3 dB &rarr;
+                <span class="op-tag op-loud">Loudness</span> speech &minus;6 dB &rarr;
+                <span class="op-tag op-add">Add</span> crowd chanting
               </div>
             </div>
             <div class="retrieved-exemplar">
               <div class="exemplar-header">
-                <span class="sim-score">sim 0.82</span>
-                <span class="exemplar-title">"Make this recording feel like an early morning."</span>
+                <span class="sim-score">sim 0.84</span>
+                <span class="exemplar-title">"Make this feel like a large outdoor rally."</span>
               </div>
               <div class="exemplar-decomp">
-                <span class="op-tag op-remove">Remove</span> traffic &rarr;
-                <span class="op-tag op-add">Add</span> distant church bells &rarr;
-                <span class="op-tag op-loud">Loudness</span> &minus;4 dB
+                <span class="op-tag op-loud">Loudness</span> voices &minus;6 dB &rarr;
+                <span class="op-tag op-add">Add</span> crowd noise &rarr;
+                <span class="op-tag op-loud">Loudness</span> +4 dB
               </div>
             </div>
           </div>
@@ -379,11 +482,12 @@
           <div class="step-badge cot-badge"><i class="bi bi-lightbulb-fill"></i> Step 2 · CoT Reasoning</div>
           <div class="step-body">
             <div class="cot-trace">
-              The retrieved exemplars reveal a consistent pattern: remove urban noise,
-              add nature sounds, and reduce overall volume. Adapting to this audio,
-              I will: remove car engines and the siren, keep the footsteps
-              (consistent with a park), add bird song and rustling leaves,
-              then lower the overall loudness for a peaceful atmosphere.
+              The retrieved exemplars show a consistent pattern for demonstration scenes:
+              amplify emergency/alert sounds, reduce individual speech to background level,
+              and add collective crowd elements. For this audio, the police siren
+              should be louder to convey urgency, the individual human speech should be
+              attenuated to recede behind the crowd soundscape, and crowd chanting should be
+              added as the dominant foreground element.
             </div>
           </div>
         </div>
@@ -393,11 +497,10 @@
           <div class="step-badge plan-badge"><i class="bi bi-list-ol"></i> Step 3 · Atomic Plan</div>
           <div class="step-body">
             <ol class="atomic-plan">
-              <li><span class="op-tag op-remove">Remove</span> car engines</li>
-              <li><span class="op-tag op-remove">Remove</span> distant siren</li>
-              <li><span class="op-tag op-add">Add</span> bird song <small>(SNR +4 dB)</small></li>
-              <li><span class="op-tag op-add">Add</span> rustling leaves <small>(SNR +2 dB)</small></li>
-              <li><span class="op-tag op-loud">Loudness</span> &minus;3 dB</li>
+              <li><span class="op-tag op-loud">Loudness</span> emergency siren <small>(+3 dB)</small></li>
+              <li><span class="op-tag op-loud">Loudness</span> human speech <small>(&minus;6 dB)</small></li>
+              <li><span class="op-tag op-add">Add</span> crowd chanting at front <small>(+3 dB)</small></li>
+              <li><span class="op-tag op-add">Add</span> outdoor ambient noise</li>
             </ol>
           </div>
         </div>
@@ -406,12 +509,21 @@
         <div class="reasoning-step">
           <div class="step-badge out-badge"><i class="bi bi-check2-circle"></i> Step 4 · Editor Output</div>
           <div class="step-body">
-            <div class="audio-player-inline">
-              <audio controls preload="none">
-                <source src="assets/audio/complex/park_transform_output.wav" type="audio/wav" />
-                Your browser does not support the audio element.
-              </audio>
-              <span class="audio-caption">Final edited audio (5 sequential edits)</span>
+            <div class="audio-player-inline" style="display:flex; gap:24px; flex-wrap:wrap;">
+              <div>
+                <span class="audio-caption" style="display:block; margin-bottom:6px;"><i class="bi bi-mic"></i> Source Audio</span>
+                <audio controls preload="none">
+                  <source src="assets/audio/complex/demonstration_source.wav" type="audio/wav" />
+                  Your browser does not support the audio element.
+                </audio>
+              </div>
+              <div>
+                <span class="audio-caption" style="display:block; margin-bottom:6px;"><i class="bi bi-stars"></i> Edited Audio (4 sequential edits)</span>
+                <audio controls preload="none">
+                  <source src="assets/audio/complex/demonstration_output.wav" type="audio/wav" />
+                  Your browser does not support the audio element.
+                </audio>
+              </div>
             </div>
           </div>
         </div>
@@ -632,125 +744,11 @@
   </div>
 </section>
 
-<!-- ============ SPEECH EDITING DEMO ============ -->
-<section id="speech-editing" class="section section-alt">
-  <div class="container">
-    <h2 class="section-title">Speech Editing Samples</h2>
-    <p class="section-lead">
-      Cross-domain speech editing results on the RealEdit benchmark. The same MMDiT editor backbone
-      handles word-level insertion, deletion, and substitution without any speech-specific modifications.
-      <strong>Spot the edited region</strong> &mdash; non-target acoustic content (timbre, prosody, background) is preserved.
-    </p>
-
-    <!-- Language tabs -->
-    <div class="gallery-tabs">
-      <button class="gallery-tab active" onclick="switchSpeechLang('en')">
-        <i class="bi bi-translate"></i> English
-      </button>
-      <button class="gallery-tab" onclick="switchSpeechLang('zh')">
-        <i class="bi bi-translate"></i> Chinese
-      </button>
-    </div>
-
-    <!-- English samples -->
-    <div id="speech-en" class="speech-editing-content">
-      <table class="speech-edit-table">
-        <thead>
-          <tr>
-            <th>Original Transcript</th>
-            <th>Edited Transcript</th>
-            <th>Original Audio</th>
-            <th>Edited Audio</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>After all, who doesn't want to overcome new challenges and <s>achieve great heights</s>?</td>
-            <td>After all, who doesn't want to overcome new challenges and <mark>succeed beyond measure</mark>?</td>
-            <td><audio controls preload="none" src="assets/voicecraft-x/EN_prompt_1.wav"></audio></td>
-            <td><audio controls preload="none" src="assets/voicecraft-x/EN_voicecraftx_1.wav"></audio></td>
-          </tr>
-          <tr>
-            <td>He has also worked as a teacher, lecturer, critic and broadcaster.</td>
-            <td>He has also worked <mark>in various capacities</mark> as a teacher, lecturer, critic and broadcaster.</td>
-            <td><audio controls preload="none" src="assets/voicecraft-x/EN_prompt_2.wav"></audio></td>
-            <td><audio controls preload="none" src="assets/voicecraft-x/EN_voicecraftx_2.wav"></audio></td>
-          </tr>
-          <tr>
-            <td>Since work done is force times distance, mechanical power is <s>force times speed</s>.</td>
-            <td>Since work done is force times distance, mechanical power is <mark>the rate at which work is done</mark>.</td>
-            <td><audio controls preload="none" src="assets/voicecraft-x/EN_prompt_12.wav"></audio></td>
-            <td><audio controls preload="none" src="assets/voicecraft-x/EN_voicecraftx_12.wav"></audio></td>
-          </tr>
-          <tr>
-            <td>Her cousin is a former member of the House of Representatives in Japan.</td>
-            <td>Her cousin, <mark>who resides in Tokyo</mark>, is a former member of the House of Representatives in Japan.</td>
-            <td><audio controls preload="none" src="assets/voicecraft-x/EN_prompt_7.wav"></audio></td>
-            <td><audio controls preload="none" src="assets/voicecraft-x/EN_voicecraftx_7.wav"></audio></td>
-          </tr>
-          <tr>
-            <td>His heart has been affected by his anxiety, and he has another heart attack.</td>
-            <td>His heart has been affected by his anxiety, and he has another heart attack <mark>requiring immediate medical attention</mark>.</td>
-            <td><audio controls preload="none" src="assets/voicecraft-x/EN_prompt_6.wav"></audio></td>
-            <td><audio controls preload="none" src="assets/voicecraft-x/EN_voicecraftx_6.wav"></audio></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Chinese samples -->
-    <div id="speech-zh" class="speech-editing-content" style="display:none;">
-      <table class="speech-edit-table">
-        <thead>
-          <tr>
-            <th>Original Transcript</th>
-            <th>Edited Transcript</th>
-            <th>Original Audio</th>
-            <th>Edited Audio</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>照片中李弘基和张根硕两人站在中间，做<s>可爱咧嘴状</s>。</td>
-            <td>照片中李弘基和张根硕两人站在中间，做<mark>调皮的微笑</mark>。</td>
-            <td><audio controls preload="none" src="assets/voicecraft-x/ZH_prompt_1.wav"></audio></td>
-            <td><audio controls preload="none" src="assets/voicecraft-x/ZH_voicecraftx_1.wav"></audio></td>
-          </tr>
-          <tr>
-            <td>毒虫把毒品丢进马桶冲走，未料毒品又浮出水面，让警方逮个正着。</td>
-            <td>毒虫把毒品丢进马桶冲走，未料<mark>令人啼笑皆非的是</mark>，毒品又浮出水面，让警方逮个正着。</td>
-            <td><audio controls preload="none" src="assets/voicecraft-x/ZH_prompt_11.wav"></audio></td>
-            <td><audio controls preload="none" src="assets/voicecraft-x/ZH_voicecraftx_11.wav"></audio></td>
-          </tr>
-          <tr>
-            <td>在半决赛，美国女排<s>险胜</s>古巴闯入决赛，最终收获银牌。</td>
-            <td>在半决赛，美国女排<mark>经过苦战击败</mark>古巴闯入决赛，最终收获银牌。</td>
-            <td><audio controls preload="none" src="assets/voicecraft-x/ZH_prompt_3.wav"></audio></td>
-            <td><audio controls preload="none" src="assets/voicecraft-x/ZH_voicecraftx_3.wav"></audio></td>
-          </tr>
-          <tr>
-            <td>你可以学习一下中国跳棋或者军棋，这两个容易多了。</td>
-            <td>你可以<mark>试着</mark>学习一下中国跳棋或者军棋，这两个<mark>游戏的规则</mark>容易多了。</td>
-            <td><audio controls preload="none" src="assets/voicecraft-x/ZH_prompt_9.wav"></audio></td>
-            <td><audio controls preload="none" src="assets/voicecraft-x/ZH_voicecraftx_9.wav"></audio></td>
-          </tr>
-          <tr>
-            <td>最便捷的方法，就是用纱窗将蚊子阻止在屋外。</td>
-            <td>最便捷的方法，就是用纱窗将<mark>那些烦人的</mark>蚊子阻止在屋外。</td>
-            <td><audio controls preload="none" src="assets/voicecraft-x/ZH_prompt_10.wav"></audio></td>
-            <td><audio controls preload="none" src="assets/voicecraft-x/ZH_voicecraftx_10.wav"></audio></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</section>
-
 <script>
 function switchSpeechLang(lang) {
   document.getElementById('speech-en').style.display = lang === 'en' ? '' : 'none';
   document.getElementById('speech-zh').style.display = lang === 'zh' ? '' : 'none';
-  var tabs = document.querySelectorAll('#speech-editing .gallery-tab');
+  var tabs = document.querySelectorAll('#tab-speech .gallery-tab');
   tabs.forEach(function(t, i) { t.classList.toggle('active', (i === 0 && lang === 'en') || (i === 1 && lang === 'zh')); });
 }
 </script>
@@ -777,11 +775,6 @@ function switchSpeechLang(lang) {
         <div class="fs-icon fs-icon-rag"><i class="bi bi-search"></i></div>
         <div class="fs-label">Long-tail retrieval miss</div>
         <div class="fs-stage">Stage: <code>RAG Index</code></div>
-      </div>
-      <div class="failure-summary-card">
-        <div class="fs-icon fs-icon-edit"><i class="bi bi-layers"></i></div>
-        <div class="fs-label">Dense-scene confusion</div>
-        <div class="fs-stage">Stage: <code>MMDiT Editor</code></div>
       </div>
       <div class="failure-summary-card">
         <div class="fs-icon fs-icon-blend"><i class="bi bi-soundwave"></i></div>

@@ -8,7 +8,6 @@
   document.addEventListener('DOMContentLoaded', function () {
     renderOperationDemos();
     renderComplexDemos();
-    renderSpeechDemos();
     renderBaselineDemos();
     renderFailureCases();
     renderGallery('mmediting');
@@ -83,31 +82,27 @@
                 <span style="font-size:0.83rem; color:var(--c-text-muted);">${escapeHtml(step.text)}</span>${arrow}`;
       }).join(' ');
 
-      // Spectrogram comparison section (only if paths are provided)
-      var specSection = '';
-      if (demo.specSrc && demo.specEdited) {
-        specSection = `
-          <div class="spec-compare">
-            <div class="spec-panel">
-              <div class="spec-label spec-label-src">
-                <i class="bi bi-soundwave"></i> Source Spectrogram
+      // Baseline comparison section
+      var baselineSection = '';
+      if (demo.baselines && demo.baselines.length > 0) {
+        const baselineSlots = demo.baselines.map(function (b) {
+          return `
+            <div class="audio-slot">
+              <div class="slot-label baseline-label">
+                <i class="bi bi-diagram-3"></i> ${escapeHtml(b.name)}
               </div>
-              <div class="spec-img-wrap">
-                <img src="${demo.specSrc}" alt="Source mel-spectrogram" loading="lazy"
-                     onerror="handleImageError(this, 'Source Spectrogram')" />
-              </div>
+              <audio controls preload="none">
+                <source src="${b.audio}" type="audio/wav" />
+              </audio>
+            </div>`;
+        }).join('');
+        baselineSection = `
+          <div class="baseline-compare" style="margin-top:12px; padding-top:12px; border-top:1px solid var(--c-border);">
+            <div style="font-size:0.78rem; color:var(--c-text-soft); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; font-weight:600;">
+              <i class="bi bi-bar-chart-steps"></i> Baseline Comparison
             </div>
-            <div class="spec-arrow">
-              <i class="bi bi-arrow-right-circle-fill"></i>
-            </div>
-            <div class="spec-panel">
-              <div class="spec-label spec-label-edited">
-                <i class="bi bi-stars"></i> Edited Spectrogram
-              </div>
-              <div class="spec-img-wrap">
-                <img src="${demo.specEdited}" alt="Edited mel-spectrogram" loading="lazy"
-                     onerror="handleImageError(this, 'Edited Spectrogram')" />
-              </div>
+            <div class="demo-body" style="flex-wrap:wrap;">
+              ${baselineSlots}
             </div>
           </div>
         `;
@@ -132,14 +127,14 @@
             </div>
             <div class="audio-slot">
               <div class="slot-label edited">
-                <i class="bi bi-stars"></i> QuarkAudio-Edit Output
+                <i class="bi bi-stars"></i> QuarkAudio-Edit (Ours)
               </div>
               <audio controls preload="none">
                 <source src="${demo.edited}" type="audio/wav" />
               </audio>
             </div>
           </div>
-          ${specSection}
+          ${baselineSection}
           <div class="cot-trace-mini">
             <strong>CoT Reasoning:</strong> ${escapeHtml(demo.cot)}
           </div>
