@@ -71,7 +71,7 @@
       <strong>TL;DR:</strong> QuarkAudio-Edit decouples CoT-guided planning from diffusion-based execution.
       An ALM planner decomposes free-form instructions into six atomic operations via CoT reasoning augmented
       by a 550K+ RAG index; an MMDiT editor executes them sequentially; progressive GRPO refines both stages.
-      On declarative multi-step instructions, it achieves FAD 3.27, reducing FAD by 21.2% over SmartDJ (4.15) and by 41.4% over MMEdit, with the highest CLAP similarity (0.241).
+      On 500 declarative complex instructions, it achieves FAD 3.27, reducing FAD by 21.2% over SmartDJ (4.15) and FD by 26.8% (35.41 vs. 48.36), with the highest CLAP similarity (0.241).
     </div>
   </div>
 </header>
@@ -97,7 +97,7 @@
     <div class="abstract-box">
       <p>
         Text-guided audio editing aims to modify input audio according to natural-language instructions.
-        Existing systems support limited editing operations and rely on fixed instruction templates, struggling with complex, multi-step instructions that require decomposing implicit user intent into executable atomic operations.
+        However, existing systems support limited editing operations and rely on fixed instruction templates, struggling with complex instructions that require decomposing implicit intent into atomic operations while preserving non-target content.
         We present <strong>QuarkAudio-Edit</strong>, a unified framework that decouples CoT-guided structured decomposition from diffusion-based signal editing.
         An audio language model (ALM) planner decomposes free-form instructions into six atomic operations via CoT reasoning, augmented by retrieval-augmented generation (RAG) with retrieved exemplars.
         The resulting plans are executed by an MMDiT editor trained on triplets synthesized through multi-source pipelines and online composition, further optimized via progressive reinforcement learning (PRL) with multi-rule rewards.
@@ -134,7 +134,7 @@
         </ul>
       </div>
       <div class="overview-figure">
-        <img src="assets/images/intro_renew_v2.png"
+        <img src="assets/images/intro_renew_v5.png"
              alt="QuarkAudio-Edit editing scope and atomic operations"
              loading="lazy"
              onerror="handleImageError(this, 'Figure 1 &middot; Editing Scope and Atomic Operations')" />
@@ -186,14 +186,15 @@
     </p>
 
     <div class="method-figure">
-      <img src="assets/images/QuarkAudio-edit-v2.png"
+      <img src="assets/images/QuarkAudio_edit_pipeline_0525_V2.jpg"
            alt="QuarkAudio-Edit architecture overview"
            loading="lazy"
            onerror="handleImageError(this, 'Figure 2 &middot; Architecture Overview')" />
       <p class="figure-caption">
         <strong>Figure 2.</strong> Architecture of QuarkAudio-Edit.
-        The ALM planner decomposes free-form instructions into atomic operations through CoT reasoning with RAG;
-        the MMDiT editor executes them sequentially. The ALM and MMDiT modules are trained separately.
+        The ALM planner decomposes free-form instructions into atomic operations through CoT reasoning with RAG,
+        while the MMDiT editor and Multi-GRPO, denoted as the Atomic Edit Model (AEM), execute them sequentially.
+        The ALM and MMDiT modules are trained separately.
       </p>
     </div>
 
@@ -537,10 +538,10 @@
   <div class="container">
     <h2 class="section-title">Experimental Results</h2>
       <p class="section-lead">
-      QuarkAudio-Edit is evaluated on 3,000 single-step editing triplets (500 samples per operation)
+      QuarkAudio-Edit is evaluated on 3,000 single-step editing triplets from a held-out AudioCaps test split
       and 500 declarative complex instructions (each requiring 2&ndash;4 inferred atomic operations),
-      consistently outperforming strong baselines across all six atomic operations.
-      All experiments employ 10 s test samples.
+      consistently outperforming strong baselines across all metrics.
+      All experiments employ 10 s test samples on a single A100 GPU.
     </p>
 
     <!-- Table 2: Overall Comparison -->
@@ -679,7 +680,7 @@
       <div class="ablation-card">
         <div class="ablation-label">Atomic decomposition</div>
         <div class="ablation-value">38.5%</div>
-        <div class="ablation-desc">Primary driver: FAD 6.80 &rarr; 5.44</div>
+        <div class="ablation-desc">Necessary first step: FAD 6.80 &rarr; 5.44</div>
       </div>
       <div class="ablation-card">
         <div class="ablation-label">Reasoning only ≠ better</div>
@@ -689,7 +690,7 @@
       <div class="ablation-card">
         <div class="ablation-label">Full CoT + sequential</div>
         <div class="ablation-value">&minus;39.9%</div>
-        <div class="ablation-desc">FAD 5.44 &rarr; 3.27 (both essential)</div>
+        <div class="ablation-desc">FAD 5.44 &rarr; 3.27 (61.5% of total gain)</div>
       </div>
       <div class="ablation-card">
         <div class="ablation-label">Source-latent init</div>
