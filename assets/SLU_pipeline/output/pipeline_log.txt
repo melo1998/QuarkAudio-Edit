@@ -1,0 +1,13 @@
+=== Pipeline Run ===
+Chat ID: synth_0000
+Output Dir: D:\AliBaBa\Project\03_ai_glasses\SmartGlasses-Track1\Track1\Dev\Synthetic
+Mode: text_only (skip TTS, use silence)
+
+
+============================================================
+  Pipeline Start: synth_0000
+============================================================
+
+[Step 1/5] 生成对话内容...
+
+=== FAILED ===
