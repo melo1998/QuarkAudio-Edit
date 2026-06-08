@@ -100,8 +100,8 @@ class DPRNN_GRU(nn.Module):
 # SE-UNet Network
 # ============================================================
 class SE_UNET(nn.Module):
-    def __init__(self, emb_dim=96, in_channels=3, out_channels=4, n_freqs=128, dprnn_num=8):
-        super().__init__()
+    def __init__(self, emb_dim=64, in_channels=3, out_channels=2, n_freqs=128, dprnn_num=3, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.dprnn_num = dprnn_num
 
         self.en_conv1_1 = nn.Sequential(
@@ -109,68 +109,94 @@ class SE_UNET(nn.Module):
             nn.Conv2d(in_channels, emb_dim, kernel_size=(2, 5), stride=(1, 2)),
             nn.ReLU(),
         )
+
         self.en_conv1_2 = nn.Sequential(
             nn.ConstantPad2d((2, 2, 1, 0), 0.0),
             nn.Conv2d(in_channels, emb_dim, kernel_size=(2, 5), stride=(1, 2)),
             nn.ReLU(),
         )
+
         self.en_conv1_3 = nn.Sequential(
             nn.ConstantPad2d((2, 2, 1, 0), 0.0),
             nn.Conv2d(in_channels, emb_dim, kernel_size=(2, 5), stride=(1, 2)),
             nn.ReLU(),
         )
+
         self.en_conv1_4 = nn.Sequential(
             nn.ConstantPad2d((2, 2, 1, 0), 0.0),
             nn.Conv2d(in_channels, emb_dim, kernel_size=(2, 5), stride=(1, 2)),
             nn.ReLU(),
         )
+
+        # self.en_conv1_5 = nn.Sequential(
+        #     nn.ConstantPad2d((2, 2, 1, 0), 0.0),
+        #     nn.Conv2d(in_channels, emb_dim, kernel_size=(2, 5), stride=(1, 2)),
+        #     nn.ReLU(),
+        # )
+
         self.en_conv2 = nn.Sequential(
             nn.ConstantPad2d((2, 2, 1, 0), 0.0),
             nn.Conv2d(emb_dim, emb_dim, kernel_size=(2, 5), stride=(1, 2)),
             nn.ReLU(),
         )
-        self.dprnn_list = nn.ModuleList([
-            DPRNN_GRU(emb_dim=emb_dim, hidden_dim=emb_dim * 2) for _ in range(dprnn_num)
-        ])
-        self.de_conv2_0 = nn.Sequential(
+
+        # self.en_conv1 = nn.Sequential(
+        #     nn.ConstantPad2d((0, 0, 1, 0), 0.0),
+        #     nn.Conv2d(in_channels, emb_dim, kernel_size=(2, 5), stride=(1, 2), padding=(0, 2)),
+        #     nn.ReLU(),
+        # )
+        # self.en_conv2 = nn.Sequential(
+        #     nn.ConstantPad2d((0, 0, 1, 0), 0.0),
+        #     nn.Conv2d(emb_dim, emb_dim, kernel_size=(2, 5), stride=(1, 2), padding=(0, 2)),
+        #     nn.ReLU(),
+        # )
+
+        # GRU for downsampled features
+        # n_freqs = math.ceil(n_freqs / 2)
+        # n_freqs = math.ceil(n_freqs / 2)
+        self.dprnn_list = nn.ModuleList([DPRNN_GRU(emb_dim=emb_dim, hidden_dim=emb_dim * 2) for i in range(dprnn_num)])
+        # self.dprnn1 = DPRNN_GRU(emb_dim=emb_dim, hidden_dim=emb_dim * 2)
+        # self.dprnn2 = DPRNN_GRU(emb_dim=emb_dim, hidden_dim=emb_dim * 2)
+        # self.dprnn3 = DPRNN_GRU(emb_dim=emb_dim, hidden_dim=emb_dim * 2)
+        self.de_conv2 = nn.Sequential(
             nn.ConvTranspose2d(emb_dim, emb_dim, kernel_size=(1, 6), stride=(1, 2), padding=(0, 2)),
             nn.ReLU(),
         )
-        self.de_conv2_1 = nn.Sequential(
+        self.de_conv1 = nn.Sequential(
             nn.ConvTranspose2d(emb_dim, emb_dim, kernel_size=(1, 6), stride=(1, 2), padding=(0, 2)),
             nn.ReLU(),
         )
-        self.de_conv1_0 = nn.Sequential(
-            nn.ConvTranspose2d(emb_dim, emb_dim, kernel_size=(1, 6), stride=(1, 2), padding=(0, 2)),
-            nn.ReLU(),
-        )
-        self.de_conv1_1 = nn.Sequential(
-            nn.ConvTranspose2d(emb_dim, emb_dim, kernel_size=(1, 6), stride=(1, 2), padding=(0, 2)),
-            nn.ReLU(),
-        )
-        self.final_conv_0 = nn.Conv2d(emb_dim, out_channels, kernel_size=(1, 1))
-        self.final_conv_1 = nn.Conv2d(emb_dim, out_channels, kernel_size=(1, 1))
+        self.final_conv = nn.Conv2d(emb_dim, out_channels, kernel_size=(1, 1), stride=(1, 1), padding=(0, 0))
 
     def forward(self, spec1, spec2, spec3, spec4):
-        en_conv1_1 = self.en_conv1_1(spec1)
+        """
+        spec: (B, 3, T, F), F=128
+        """
+        #print("00000000000")
+        en_conv1_1 = self.en_conv1_1(spec1)  # (B,D,T,64)
         en_conv1_2 = self.en_conv1_2(spec2)
         en_conv1_3 = self.en_conv1_3(spec3)
         en_conv1_4 = self.en_conv1_4(spec4)
-        en_conv1 = en_conv1_1 + en_conv1_2 + en_conv1_3 + en_conv1_4
-        en_conv2 = self.en_conv2(en_conv1)
-
-        gru_out = en_conv2
+        #en_conv1_5 = self.en_conv1_5(spec5)
+        en_conv1 = en_conv1_1 + en_conv1_2 + en_conv1_3 + en_conv1_4 
+        en_conv2 = self.en_conv2(en_conv1)  # (B,D,T,32)
+        # print('encoder:',spec1.shape,en_conv1.shape,en_conv2.shape)
+        
         for i in range(self.dprnn_num):
-            gru_out = self.dprnn_list[i](gru_out)
-
-        de_conv2_1 = self.de_conv2_0(gru_out + en_conv2)
-        de_conv2_2 = self.de_conv2_1(gru_out + en_conv2)
-        de_conv1_1 = self.de_conv1_0(de_conv2_1 + en_conv1)
-        de_conv1_2 = self.de_conv1_1(de_conv2_2 + en_conv1)
-        final_conv_1 = self.final_conv_0(de_conv1_1)
-        final_conv_2 = self.final_conv_1(de_conv1_2)
-        return final_conv_1, final_conv_2
-
+            if i==0:
+                gru_out = self.dprnn_list[0](en_conv2)
+            else:
+                gru_out = self.dprnn_list[i](gru_out)
+        # gru_out1 = self.dprnn1(en_conv2)
+        # gru_out2 = self.dprnn2(gru_out1)
+        # gru_out3 = self.dprnn3(gru_out2)
+        de_conv2 = self.de_conv2(gru_out + en_conv2)
+        # print(de_conv2.shape)
+        de_conv1 = self.de_conv1(de_conv2 + en_conv1)
+        # print(de_conv1.shape)
+        final_conv = self.final_conv(de_conv1)
+        # print('decoder:',gru_out.shape, de_conv2.shape, de_conv1.shape, final_conv.shape)
+        return final_conv, gru_out
 
 # ============================================================
 # Inference Engine
@@ -277,15 +303,16 @@ class SpeechEnhancer:
             end = min((seg_idx + 1) * segment_length, total_length)
             if end - start < self.SAMPLE_RATE:
                 continue
-
-            # src1 = wav_tensor[:, 0, start:end]
-            # src2 = wav_tensor[:, 1, start:end]
-            # src3 = wav_tensor[:, 2, start:end]
-            # src4 = wav_tensor[:, 3, start:end]
+            #-----效果最好
             src1 = wav_tensor[:, 1, start:end]
             src2 = wav_tensor[:, 2, start:end]
-            src3 = wav_tensor[:, 3, start:end]
-            src4 = wav_tensor[:, 0, start:end]
+            src3 = wav_tensor[:, 0, start:end]
+            src4 = wav_tensor[:, 3, start:end]
+            #-----效果最好次优
+            # src1 = wav_tensor[:, 1, start:end]
+            # src2 = wav_tensor[:, 2, start:end]
+            # src3 = wav_tensor[:, 3, start:end]
+            # src4 = wav_tensor[:, 0, start:end]
             # STFT + compress
             src1_spec = self._stft_compress(src1)
             feat2 = torch.stack([src1_spec.abs(), src1_spec.real, src1_spec.imag], dim=1)
@@ -300,17 +327,20 @@ class SpeechEnhancer:
             feat5 = self.erb.bm(feat5)
 
             # Network forward (uses channels 2,3,4,1 as input order matching training)
-            outputs_1, outputs_2 = self.dnn(feat2, feat3, feat4, feat5)
+            outputs, outputs_2 = self.dnn(feat2, feat3, feat4, feat5)
 
-            # ERB inverse
-            outputs_1 = self.erb.bs(outputs_1)
-            outputs_2 = self.erb.bs(outputs_2)
+            outputs = self.erb.bs(outputs)  # (b,2,t,f)
+            mask1 = torch.complex(outputs[:, 0], outputs[:, 1])
+            mask2 = torch.complex(outputs[:, 2], outputs[:, 3])
 
-            # Apply masks
-            mask1 = torch.complex(outputs_1[:, 0], outputs_1[:, 1])
-            mask2 = torch.complex(outputs_2[:, 0], outputs_2[:, 1])
-            est_spec1 = src1_spec * mask1
+            est_spec1 = src1_spec * mask1  
             est_spec2 = src1_spec * mask2
+
+            # # Apply masks
+            # mask1 = torch.complex(outputs_1[:, 0], outputs_1[:, 1])
+            # mask2 = torch.complex(outputs_2[:, 0], outputs_2[:, 1])
+            # est_spec1 = src1_spec * mask1
+            # est_spec2 = src1_spec * mask2
 
             # ISTFT
             est1 = self._decompress_istft(est_spec1, length=src2.size(-1))
@@ -330,11 +360,11 @@ class SpeechEnhancer:
 def main():
     parser = argparse.ArgumentParser(description="Speech Enhancement Inference")
     parser.add_argument("--input", default='./dataset/chat_0330.wav', help="Input 4-channel WAV file path")
-    parser.add_argument("--output", default='./dataset/chat_0330_enh02.wav',  help="Output 2-channel WAV file path")
+    parser.add_argument("--output", default='./dataset/chat_0330_enh03.wav',  help="Output 2-channel WAV file path")
     parser.add_argument("--ckpt", type=str,
-                        default="./epoch=47-step=88847-pesq=4.79.ckpt",
+                        default="./epoch=16-step=70821-pesq=4.15.ckpt",
                         help="Checkpoint path (.ckpt or .pt)")
-    parser.add_argument("--device", type=str, default="cuda:0", help="Device: cuda or cpu")
+    parser.add_argument("--device", type=str, default="cuda:5", help="Device: cuda or cpu")
     args = parser.parse_args()
      
     # Load audio
