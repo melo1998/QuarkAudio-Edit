@@ -8,7 +8,7 @@
    - 550K+ RAG index entries (FAISS)
    - 50K CoT instruction-decomposition pairs
    - FAD 3.27 (21.2% reduction over SmartDJ)
-   - Inference: 9.94s (8× faster than AudioEditor)
+   - Inference: 9.85s (4.3× faster than AudioEditor)
    ============================================================ */
 
 /* ---------- 6 Atomic Operations ----------

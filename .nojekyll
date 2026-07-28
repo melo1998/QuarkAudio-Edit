@@ -1,0 +1,15 @@
+#Role 假如你是一个顶级的语音算法专家
+#TAsk
+   1、你现在需要根据D:\02_Project\05_LLM_Audio\20260622_论文撰写\QuarkAudio_edit-AAAI_0724\AnonymousSubmission2027.tex论文里边的
+      架构图 模型图 内容 摘要等等对于D:\02_Project\05_LLM_Audio\Text2Audio\QuarkAudio-Edit\index.html
+    2.对当前demo进行编辑 生成 保证内容和论文完全一致
+    3、进行升级
+    尤其是图片保持完全一致 内容 实验结果表格等等
+
+
+针对T2A任务也要加DEMO：
+   01-gen_line122_audio_000121.wav 对应的文本指令：An aircraft motor is running and whirring is present, helicopter rotors slap rhythmically, and an adult male speaks in the background
+   02-gen_line140_audio_000139.wav 对应的文本指令：A man yelling followed by an infant crying then a woman shouting as a crowd of people talk and laugh
+   03-audio_000005.wav 对应的文本指令：A man speaks as birds chirp and dogs bark
+   04-audio_000083.wav 对应的文本指令：Pigeons cooing as air lightly hisses in the background followed by a camera muffling
+   05-audio_000056.wav 对应的文本指令：Crumpling paper noise with female speech

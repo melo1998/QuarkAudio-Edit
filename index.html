@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>QuarkAudio-Edit: Atomic Decomposition with Retrieval-Augmented Planning for Audio Editing</title>
-<meta name="description" content="QuarkAudio-Edit is a unified framework for text-guided audio editing that decouples atomic decomposition planning from MMDiT diffusion editing, achieving FAD 3.27 with 21.2% reduction over the strongest baseline." />
+<title>QuarkAudio-Edit: Text-Guided Audio Editing with Retrieval-Augmented Atomic Planning and Progressive Reinforcement Learning</title>
+<meta name="description" content="QuarkAudio-Edit is a unified framework for text-guided audio editing that decouples retrieval-augmented atomic planning from MMDiT diffusion editing, refined by progressive reinforcement learning, achieving FAD 3.27 with 21.2% reduction over the strong baseline SmartDJ." />
 
 <!-- Open Graph / Twitter Card -->
 <meta property="og:type"        content="website" />
-<meta property="og:title"       content="QuarkAudio-Edit: Atomic Decomposition with Retrieval-Augmented Planning for Audio Editing" />
-<meta property="og:description" content="A unified framework for general audio and speech editing with atomic decomposition, 550K+ RAG index, and progressive GRPO reinforcement learning." />
+<meta property="og:title"       content="QuarkAudio-Edit: Text-Guided Audio Editing with Retrieval-Augmented Atomic Planning and Progressive Reinforcement Learning" />
+<meta property="og:description" content="A unified framework for sound-event editing, word-level speech editing, and text-to-audio generation with a hybrid planner over six atomic operations, a 550K+ RAG index, and progressive GRPO reinforcement learning." />
 <meta property="og:image"       content="assets/images/Edit.png" />
 <meta name="twitter:card"       content="summary_large_image" />
-<meta name="twitter:title"      content="QuarkAudio-Edit: Atomic Decomposition with RAG Planning" />
-<meta name="twitter:description" content="Unified audio and speech editing with atomic decomposition, RAG-augmented planning and MMDiT execution." />
+<meta name="twitter:title"      content="QuarkAudio-Edit: Retrieval-Augmented Atomic Planning + Progressive RL" />
+<meta name="twitter:description" content="Unified audio and speech editing with hybrid atomic planning, RAG retrieval, MMDiT execution and progressive GRPO." />
 <meta name="twitter:image"      content="assets/images/Edit.png" />
 
 <!-- Fonts -->
@@ -41,11 +41,11 @@
 <header class="hero">
   <div class="hero-bg"></div>
   <div class="container hero-inner">
-    <div class="venue-badge">Under Review &middot; EMNLP 2026</div>
+    <div class="venue-badge">Under Review &middot; AAAI 2027</div>
     <h1 class="title">
       <span class="title-gradient">QuarkAudio-Edit:</span><br />
-      Atomic Decomposition with Retrieval-Augmented<br />
-      Planning for Audio Editing
+      Text-Guided Audio Editing with Retrieval-Augmented<br />
+      Atomic Planning and Progressive Reinforcement Learning
     </h1>
     <div class="authors">
       <span class="author">Anonymous Authors</span>
@@ -68,10 +68,13 @@
     </div>
 
     <div class="tldr">
-      <strong>TL;DR:</strong> QuarkAudio-Edit decouples CoT-guided planning from diffusion-based execution.
-      An ALM planner decomposes free-form instructions into six atomic operations via CoT reasoning augmented
-      by a 550K+ RAG index; an MMDiT editor executes them sequentially; progressive GRPO refines both stages.
-      On 500 declarative complex instructions, it achieves FAD 3.27, reducing FAD by 21.2% over SmartDJ (4.15) and FD by 26.8% (35.41 vs. 48.36), with the highest CLAP similarity (0.241).
+      <strong>TL;DR:</strong> QuarkAudio-Edit decouples atomic planning from diffusion-based signal editing.
+      A hybrid planner maps free-form instructions to atomic steps drawn from six operation types &mdash; via direct
+      template retrieval over a 550K+ RAG index or model-based chain-of-thought (CoT) reasoning &mdash; and an MMDiT
+      editor executes the plan sequentially; progressive GRPO refines both planning quality and acoustic fidelity.
+      On 500 declarative complex instructions, it achieves FAD 3.27, reducing FAD by 21.2% over SmartDJ (4.15) and
+      FD by 26.8% (35.41 vs. 48.36), with the highest CLAP similarity (0.241). The same architecture also supports
+      word-level speech editing and standalone text-to-audio generation.
     </div>
   </div>
 </header>
@@ -97,11 +100,13 @@
     <div class="abstract-box">
       <p>
         Text-guided audio editing aims to modify input audio according to natural-language instructions.
-        However, existing systems support limited editing operations and rely on fixed instruction templates, struggling with complex instructions that require decomposing implicit intent into atomic operations while preserving non-target content.
-        We present <strong>QuarkAudio-Edit</strong>, a unified framework that decouples CoT-guided structured decomposition from diffusion-based signal editing.
-        An audio language model (ALM) planner decomposes free-form instructions into six atomic operations via CoT reasoning, augmented by retrieval-augmented generation (RAG) with retrieved exemplars.
-        The resulting plans are executed by an MMDiT editor trained on triplets synthesized through multi-source pipelines and online composition, further optimized via progressive reinforcement learning (PRL) with multi-rule rewards.
-        On a declarative multi-step instruction dataset, QuarkAudio-Edit achieves FAD 3.27, reducing FAD by 21.2% over the strongest baseline (SmartDJ, 4.15) and by 41.4% over MMEdit, while attaining the highest CLAP similarity (0.241) among all compared systems.
+        Existing systems often support limited operation types and struggle with free-form instructions involving multi-step edits.
+        We present <strong>QuarkAudio-Edit</strong>, a unified framework that supports multi-step edits by decoupling atomic planning from diffusion-based signal editing.
+        The hybrid planner maps free-form instructions to atomic steps drawn from six operation types, using either direct template retrieval or model-based chain-of-thought (CoT) reasoning.
+        The Multimodal Diffusion Transformer (MMDiT) editor then executes the resulting plan via conditional diffusion while preserving non-target content.
+        The framework is trained on data from multi-source synthesis pipelines and further refined through progressive reinforcement learning over planning quality and acoustic fidelity.
+        Beyond sound-event editing, the same architecture also supports word-level speech editing and standalone text-to-audio generation.
+        On our complex declarative editing test set, QuarkAudio-Edit reduces Fr&eacute;chet Audio Distance (FAD) by 21.2% over the strong baseline SmartDJ (3.27 vs. 4.15), and achieves the best human-rated relevance and content preservation scores.
       </p>
     </div>
   </div>
@@ -115,22 +120,27 @@
       <div class="overview-text">
         <p>
           <strong>QuarkAudio-Edit</strong> addresses four limitations of existing text-guided audio editing (TAE) systems:
-          limited operation coverage, rigid instruction formats, absence of chain-of-thought reasoning, and lack of reasoning-aware optimization.
+          uneven support for attribute-level controls (loudness, speed) and temporal ordering,
+          inability to interpret declarative high-level instructions,
+          absence of structured atomic planning with explicit CoT traces,
+          and the lack of quality-aware reinforcement learning for planning and editing.
         </p>
         <p>
-          Given a free-form instruction such as
+          Given a declarative instruction such as
           <em>&ldquo;Turn this recording of birds chirping over traffic noise into a rainy evening caf&eacute; scene&rdquo;</em>, the
-          CoT&ndash;RAG planner decomposes it into a sequence of interpretable atomic
+          hybrid planner decomposes it into a sequence of interpretable atomic
           operations from the set
-          <code>{Add, Remove, Replace, Speed, Loudness, Order}</code>,
+          <code>{Add, Remove, Replace, Speed, Loudness, Order}</code>
+          &mdash; either by direct template retrieval (cosine similarity &ge; &tau; = 0.6 over a 550K+ index)
+          or by model-based CoT reasoning &mdash;
           which the MMDiT diffusion editor executes sequentially on the source audio.
         </p>
 
         <ul class="feature-list">
           <li><i class="bi bi-check-circle-fill"></i> <strong>6 atomic operations</strong> &mdash; spanning event, attribute, and temporal dimensions</li>
-          <li><i class="bi bi-check-circle-fill"></i> <strong>550K+ RAG index</strong> &mdash; robust out-of-distribution generalization</li>
-          <li><i class="bi bi-check-circle-fill"></i> <strong>Two-stage progressive GRPO</strong> &mdash; joint reasoning and fidelity optimization</li>
-          <li><i class="bi bi-check-circle-fill"></i> <strong>Unified audio and speech editing</strong> &mdash; within a single framework</li>
+          <li><i class="bi bi-check-circle-fill"></i> <strong>Hybrid planning</strong> &mdash; direct retrieval over a 550K+ RAG index, or CoT reasoning</li>
+          <li><i class="bi bi-check-circle-fill"></i> <strong>Two-stage progressive GRPO</strong> &mdash; planning quality then acoustic fidelity</li>
+          <li><i class="bi bi-check-circle-fill"></i> <strong>One architecture, three tasks</strong> &mdash; sound-event editing, word-level speech editing, and text-to-audio generation</li>
         </ul>
       </div>
       <div class="overview-figure">
@@ -172,6 +182,10 @@
         <div class="stat-value">0.241</div>
         <div class="stat-label">CLAP Similarity (Best)</div>
       </div>
+      <div class="stat-card">
+        <div class="stat-value">20</div>
+        <div class="stat-label">Denoising Steps (5&times; fewer than UNISON)</div>
+      </div>
     </div>
   </div>
 </section>
@@ -186,15 +200,15 @@
     </p>
 
     <div class="method-figure">
-      <img src="assets/images/QuarkAudio_edit_pipeline_0525_V2.jpg"
+      <img src="assets/images/QuarkAudio_edit_pipeline_0725.png"
            alt="QuarkAudio-Edit architecture overview"
            loading="lazy"
            onerror="handleImageError(this, 'Figure 2 &middot; Architecture Overview')" />
       <p class="figure-caption">
         <strong>Figure 2.</strong> Architecture of QuarkAudio-Edit.
-        The ALM planner decomposes free-form instructions into atomic operations through CoT reasoning with RAG,
-        while the MMDiT editor and Multi-GRPO, denoted as the Atomic Edit Model (AEM), execute them sequentially.
-        The ALM and MMDiT modules are trained separately.
+        The hybrid planner decomposes the declarative instruction into atomic steps,
+        either by retrieval or model-based reasoning, while the MMDiT editor executes them sequentially.
+        The Planner and Editor modules are trained separately and the former is optimized by the LoRA technique.
       </p>
     </div>
 
@@ -202,52 +216,56 @@
       <div class="method-card">
         <div class="method-icon"><i class="bi bi-database-fill-gear"></i></div>
         <h3>Data Synthesis Pipeline</h3>
-        <p>Three complementary methods produce over <strong>500,000 triplets per epoch</strong>:
-           Prompt-to-Prompt generation (150K offline pre-generated via Prompt-to-Prompt and manual edits),
-           and online per-epoch composition (~350K dynamic from AudioSet and VGG-Sound).</p>
+        <p>Three complementary methods produce over <strong>500,000 triplets</strong>
+           (150K offline plus ~350K composed online per epoch):
+           Prompt-to-Prompt synthesis, deterministic signal-level edits,
+           and online composition from AudioSet and VGG-Sound, plus ~50K CoT instruction&ndash;decomposition pairs.</p>
       </div>
       <div class="method-card">
         <div class="method-icon"><i class="bi bi-lightbulb-fill"></i></div>
-        <h3>CoT&ndash;RAG ALM Planner</h3>
-        <p>Qwen2-Audio-7B-Instruct planner fine-tuned via LoRA on 50K instruction-decomposition pairs.
-           Guided by top-3 retrieved exemplars from a <strong>550K+ FAISS index</strong>
-           (retrieval in &lt;50 ms).</p>
+        <h3>Hybrid RAPT Planner</h3>
+        <p>Direct template retrieval over a <strong>550K+ FAISS HNSW index</strong>
+           (Qwen3-Embedding-0.6B, 1024-d, &lt;50 ms): if cosine similarity &ge; &tau; = 0.6 the matched
+           atomic sequence is returned directly; otherwise a Qwen2-Audio-7B-Instruct planner
+           (LoRA r=64, ~38M trainable) performs model-based CoT reasoning.</p>
       </div>
       <div class="method-card">
         <div class="method-icon"><i class="bi bi-soundwave"></i></div>
         <h3>MMDiT Editor</h3>
-        <p>Multi-modal diffusion transformer initialized from Stable Audio Open.
-           Source latent is concatenated with the noisy target at every denoising step
-           for faithful non-target preservation. Inference uses 20 steps with CFG scale 5.</p>
+        <p>Multimodal diffusion transformer initialized from Stable Audio Open with v-prediction.
+           A frozen Qwen2-Audio encoder provides conditioning; the source latent (64-d @ 21.5 Hz)
+           is channel-concatenated at every denoising step for faithful non-target preservation.
+           Inference uses 20 steps with CFG scale 5.</p>
       </div>
       <div class="method-card">
         <div class="method-icon"><i class="bi bi-arrow-repeat"></i></div>
         <h3>Progressive GRPO</h3>
-        <p>Two-stage reinforcement learning: Stage 1 applies multi-rule rewards on CoT chains;
-           Stage 2 uses semantic and fidelity rewards with a progressive schedule
-           to optimize audio quality.</p>
+        <p>Two-stage reinforcement learning (G = 4): Stage 1 optimizes the CoT planner with multi-rule rewards
+           (&lambda;<sub>s</sub>=0.4, &lambda;<sub>v</sub>=0.3, &lambda;<sub>c</sub>=0.2, &lambda;<sub>e</sub>=0.1);
+           Stage 2 optimizes the MMDiT editor with CLAP semantic and VGGish fidelity rewards,
+           progressively shifting weight from semantics (0.7&rarr;0.3) to fidelity (0.3&rarr;0.7).</p>
       </div>
     </div>
 
     <div class="method-subfigures">
       <div class="subfigure">
-        <img src="assets/images/pipeline_renew.png"
-             alt="Data synthesis pipeline with Bayesian-optimized Prompt-to-Prompt generation"
+        <img src="assets/images/QuarkAudio_edit_dataset_pipeline_0725.png"
+             alt="Quality-driven data curation pipeline and supported editing operations"
              loading="lazy"
-             onerror="handleImageError(this, 'Figure 3 &middot; Data Synthesis Pipeline')" />
-        <p class="figure-caption"><strong>Figure 3.</strong> Data synthesis pipeline.
-          Qwen3-max converts dataset captions into structured (instruction, operation) pairs.
-          Prompt-to-Prompt audio generation is then optimized via Bayesian parameter search
-          with a composite CLAP + mel-spectrogram objective.</p>
+             onerror="handleImageError(this, 'Figure 3 &middot; Data Curation Pipeline')" />
+        <p class="figure-caption"><strong>Figure 3.</strong> Overview of the quality-driven data curation
+          pipeline and supported editing operations. GPT-4o converts AudioCaps/WavCaps captions into structured
+          (input caption, edit instruction, output caption) triplets; Prompt-to-Prompt generation is optimized via
+          Bayesian parameter search with a composite CLAP + mel-spectrogram objective (&alpha; = 0.5, 50 trials per pair).</p>
       </div>
       <div class="subfigure">
-        <img src="assets/images/gpro_renew.png"
-             alt="Progressive GRPO training pipeline"
+        <img src="assets/images/gpro_renew_0725.png"
+             alt="Progressive GRPO post-training pipeline"
              loading="lazy"
              onerror="handleImageError(this, 'Figure 4 &middot; Progressive GRPO')" />
-        <p class="figure-caption"><strong>Figure 4.</strong> Progressive GRPO pipeline:
-          Stage 1 optimizes CoT reasoning quality; Stage 2 refines acoustic fidelity
-          with composite multi-rule rewards.</p>
+        <p class="figure-caption"><strong>Figure 4.</strong> Progressive GRPO post-training pipeline.
+          Stage 1 optimizes the CoT planner with multi-rule rewards; Stage 2 optimizes the MMDiT editor
+          with semantic and fidelity rewards.</p>
       </div>
     </div>
   </div>
@@ -272,6 +290,9 @@
       </button>
       <button class="tab-btn" data-tab="speech">
         <i class="bi bi-mic-fill"></i> Speech Editing
+      </button>
+      <button class="tab-btn" data-tab="t2a">
+        <i class="bi bi-music-note-list"></i> T2A Generation
       </button>
       <button class="tab-btn" data-tab="baselines">
         <i class="bi bi-bar-chart-steps"></i> vs. Baselines
@@ -413,6 +434,84 @@
       </div>
     </div>
 
+    <!-- Tab: T2A Generation -->
+    <div class="tab-panel" id="tab-t2a">
+      <p class="section-lead" style="margin-bottom:18px;">
+        Text-to-Audio (T2A) generation results on the AudioCaps test set. The same MMDiT editor backbone
+        generates audio from scratch using only text prompts, without source conditioning. Our model achieves
+        the second-best average rank (2.8) among nine systems, matching UNISON on distributional fidelity
+        while using 5&times; fewer sampling steps (20 vs. 100).
+      </p>
+
+      <div class="demo-grid" style="grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px;">
+        <!-- T2A Sample 1 -->
+        <div class="demo-card" style="background: var(--c-surface); border: 1px solid var(--c-border); border-radius: 12px; padding: 20px;">
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+            <span class="op-tag op-add" style="font-size:0.75rem;">T2A</span>
+            <strong style="font-size:0.9rem;">Sample 1</strong>
+          </div>
+          <p style="font-size:0.85rem; color:var(--c-text-secondary); margin-bottom:12px; line-height:1.5;">
+            "An aircraft motor is running and whirring is present, helicopter rotors slap rhythmically, and an adult male speaks in the background"
+          </p>
+          <audio controls preload="none" src="assets/T2A/01-gen_line122_audio_000121.wav" style="width:100%;"></audio>
+        </div>
+
+        <!-- T2A Sample 2 -->
+        <div class="demo-card" style="background: var(--c-surface); border: 1px solid var(--c-border); border-radius: 12px; padding: 20px;">
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+            <span class="op-tag op-add" style="font-size:0.75rem;">T2A</span>
+            <strong style="font-size:0.9rem;">Sample 2</strong>
+          </div>
+          <p style="font-size:0.85rem; color:var(--c-text-secondary); margin-bottom:12px; line-height:1.5;">
+            "A man yelling followed by an infant crying then a woman shouting as a crowd of people talk and laugh"
+          </p>
+          <audio controls preload="none" src="assets/T2A/02-gen_line140_audio_000139.wav" style="width:100%;"></audio>
+        </div>
+
+        <!-- T2A Sample 3 -->
+        <div class="demo-card" style="background: var(--c-surface); border: 1px solid var(--c-border); border-radius: 12px; padding: 20px;">
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+            <span class="op-tag op-add" style="font-size:0.75rem;">T2A</span>
+            <strong style="font-size:0.9rem;">Sample 3</strong>
+          </div>
+          <p style="font-size:0.85rem; color:var(--c-text-secondary); margin-bottom:12px; line-height:1.5;">
+            "A man speaks as birds chirp and dogs bark"
+          </p>
+          <audio controls preload="none" src="assets/T2A/03-audio_000005.wav" style="width:100%;"></audio>
+        </div>
+
+        <!-- T2A Sample 4 -->
+        <div class="demo-card" style="background: var(--c-surface); border: 1px solid var(--c-border); border-radius: 12px; padding: 20px;">
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+            <span class="op-tag op-add" style="font-size:0.75rem;">T2A</span>
+            <strong style="font-size:0.9rem;">Sample 4</strong>
+          </div>
+          <p style="font-size:0.85rem; color:var(--c-text-secondary); margin-bottom:12px; line-height:1.5;">
+            "Pigeons cooing as air lightly hisses in the background followed by a camera muffling"
+          </p>
+          <audio controls preload="none" src="assets/T2A/04-audio_000083.wav" style="width:100%;"></audio>
+        </div>
+
+        <!-- T2A Sample 5 -->
+        <div class="demo-card" style="background: var(--c-surface); border: 1px solid var(--c-border); border-radius: 12px; padding: 20px;">
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+            <span class="op-tag op-add" style="font-size:0.75rem;">T2A</span>
+            <strong style="font-size:0.9rem;">Sample 5</strong>
+          </div>
+          <p style="font-size:0.85rem; color:var(--c-text-secondary); margin-bottom:12px; line-height:1.5;">
+            "Crumpling paper noise with female speech"
+          </p>
+          <audio controls preload="none" src="assets/T2A/05-audio_000056.wav" style="width:100%;"></audio>
+        </div>
+      </div>
+
+      <p class="table-note" style="margin-top:20px;">
+        All samples generated with 20 denoising steps and CFG scale 5. The MMDiT editor uses v-prediction
+        initialized from Stable Audio Open, with a frozen Qwen2-Audio encoder for text conditioning.
+        See Table 1 in the Results section for full quantitative comparison on AudioCaps (881 clips).
+      </p>
+    </div>
+
     <!-- Tab: Baselines -->
     <div class="tab-panel" id="tab-baselines">
       <div class="baseline-table-wrap" id="baseline-container">
@@ -426,10 +525,11 @@
 <!-- ============ REASONING VISUALIZATION ============ -->
 <section id="reasoning" class="section section-alt">
   <div class="container">
-    <h2 class="section-title">Chain-of-Thought Reasoning with RAG</h2>
+    <h2 class="section-title">Hybrid Planning: Retrieval + Chain-of-Thought Reasoning</h2>
     <p class="section-lead">
-      The ALM planner decomposes each complex instruction into atomic operations via CoT reasoning,
-      guided by top-3 exemplars retrieved from a 550K+ FAISS index.
+      The hybrid planner first searches a 550K+ FAISS index of instruction&ndash;plan pairs.
+      If the maximum cosine similarity reaches &tau; = 0.6, the matched atomic sequence is returned directly;
+      otherwise the Qwen2-Audio-based planner performs model-based CoT reasoning over the source audio and instruction.
     </p>
 
     <div class="reasoning-demo">
@@ -539,95 +639,122 @@
     <h2 class="section-title">Experimental Results</h2>
       <p class="section-lead">
       QuarkAudio-Edit is evaluated on 3,000 single-step editing triplets from a held-out AudioCaps test split
-      and 500 declarative complex instructions (each requiring 2&ndash;4 inferred atomic operations),
-      consistently outperforming strong baselines across all metrics.
+      and 500 declarative complex instructions, consistently outperforming strong baselines across all metrics.
       All experiments employ 10 s test samples on a single A100 GPU.
     </p>
 
-    <!-- Table 2: Overall Comparison -->
-    <h3 class="subsection-title">Overall Comparison (Table 2)</h3>
+    <!-- Table 1: Text-to-Audio Generation -->
+    <h3 class="subsection-title">Text-to-Audio Generation (AudioCaps Test Set)</h3>
     <p class="table-note">
-      500 declarative complex instructions. &ldquo;Framework&rdquo; distinguishes models without an ALM (w/o ALM) from those integrating one (w/ ALM).
-      Inference time measured on a single A100 GPU for 10 s audio.
+      Pure text-to-audio synthesis on AudioCaps (881 clips) without source conditioning.
+      GT reference: CLAP = 0.526, IS = 11.25. Avg. Rank averages the per-metric ranks.
+      Our editor attains the second-best average rank (2.8) among nine systems, matching UNISON on distributional
+      fidelity while using 5&times; fewer sampling steps (20 vs. 100) and surpassing it in text&ndash;audio alignment
+      (CLAP 0.488 vs. 0.467).
     </p>
     <div class="table-wrap">
       <table class="results-table">
         <thead>
           <tr>
-            <th>Framework</th><th>Model</th><th>Inf.&thinsp;Time &darr;</th>
+            <th>Method</th>
+            <th>FAD &darr;</th><th>FD &darr;</th><th>KL &darr;</th>
+            <th>IS &uarr;</th><th>CLAP &uarr;</th><th>Avg. Rank &darr;</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>AudioLDM 2-Large</td><td>3.097</td><td>29.68</td><td>1.490</td><td>7.98</td><td>0.452</td><td>6.0</td></tr>
+          <tr><td>Tango</td><td>1.846</td><td>24.52</td><td><strong>1.305</strong></td><td>7.45</td><td><strong>0.498</strong></td><td>3.6</td></tr>
+          <tr><td>Stable Audio Open</td><td>10.83</td><td>52.03</td><td>3.049</td><td>6.13</td><td>0.203</td><td>8.8</td></tr>
+          <tr><td>Make-An-Audio</td><td>2.142</td><td>20.14</td><td>1.597</td><td>10.02</td><td>0.441</td><td>5.1</td></tr>
+          <tr><td>Audio-Omni</td><td>2.535</td><td>31.42</td><td>1.337</td><td>9.55</td><td>0.486</td><td>4.6</td></tr>
+          <tr><td>MMAudio-L</td><td>5.893</td><td>16.53</td><td>1.421</td><td>11.98</td><td>0.441</td><td>4.5</td></tr>
+          <tr><td>UniSonate</td><td>4.210</td><td>30.21</td><td>2.440</td><td>8.22</td><td>&mdash;</td><td>7.0</td></tr>
+          <tr><td>UNISON</td><td><strong>1.756</strong></td><td><strong>15.82</strong></td><td>1.455</td><td><strong>12.04</strong></td><td>0.467</td><td><strong>2.2</strong></td></tr>
+          <tr class="ours-row">
+            <td><strong>QuarkAudio-Edit</strong></td>
+            <td>1.822</td><td>16.45</td><td>1.472</td><td>10.58</td><td>0.488</td><td>2.8</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Table 2: Overall Comparison -->
+    <h3 class="subsection-title">Overall Comparison on Declarative Complex Instructions</h3>
+    <p class="table-note">
+      500 declarative complex instructions. &ldquo;w/o ALM&rdquo; denotes systems without an audio language model for decomposition.
+      Inference time is per 10 s sample on a single A100 GPU. Steps: denoising steps (NFE for diffusion models).
+    </p>
+    <div class="table-wrap">
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th>Framework</th><th>Model</th><th>Inf.&thinsp;(s) &darr;</th><th>Steps &darr;</th>
             <th>LSD &darr;</th><th>FAD &darr;</th><th>FD &darr;</th>
             <th>KL &darr;</th><th>IS &uarr;</th><th>CLAP &uarr;</th>
             <th>R-MOS &uarr;</th><th>F-MOS &uarr;</th>
           </tr>
         </thead>
         <tbody>
-          <tr><td>w/o ALM</td><td>AudioEditor</td><td>42.51s</td><td>2.14</td><td>5.26</td><td>62.38</td><td>3.41</td><td>3.08</td><td>0.112</td><td>2.71<small>&pm;0.89</small></td><td>2.85<small>&pm;0.94</small></td></tr>
-          <tr><td rowspan="7">w/ ALM</td><td>MMEdit</td><td>19.28s</td><td>2.23</td><td>5.58</td><td>58.92</td><td>3.52</td><td>2.96</td><td>0.105</td><td>2.95<small>&pm;0.85</small></td><td>3.32<small>&pm;0.82</small></td></tr>
-          <tr><td>SAO-Instruct</td><td>18.58s</td><td>1.89</td><td>4.73</td><td>55.14</td><td>3.18</td><td>3.45</td><td>0.148</td><td>3.11<small>&pm;0.79</small></td><td>3.58<small>&pm;0.76</small></td></tr>
-          <tr><td>SmartDJ</td><td>8.62s</td><td>1.72</td><td>4.15</td><td>48.36</td><td>2.87</td><td>3.82</td><td>0.175</td><td>3.23<small>&pm;0.74</small></td><td>3.75<small>&pm;0.71</small></td></tr>
-          <tr class="ours-row"><td><strong>QuarkAudio-Edit</strong></td><td><strong>9.85s</strong></td><td><strong>1.38</strong></td><td><strong>3.27</strong></td><td><strong>35.41</strong></td><td><strong>2.18</strong></td><td><strong>4.32</strong></td><td><strong>0.241</strong></td><td><strong>3.53</strong><small>&pm;0.65</small></td><td><strong>3.98</strong><small>&pm;0.58</small></td></tr>
-          <tr><td>&emsp;w/o RAG</td><td>9.72s</td><td>1.51</td><td>3.59</td><td>38.28</td><td>2.42</td><td>4.16</td><td>0.225</td><td>3.42<small>&pm;0.68</small></td><td>3.86<small>&pm;0.62</small></td></tr>
-          <tr><td>&emsp;w/o CoT</td><td>8.25s</td><td>1.62</td><td>3.89</td><td>41.28</td><td>2.61</td><td>4.05</td><td>0.212</td><td>3.24<small>&pm;0.76</small></td><td>3.61<small>&pm;0.74</small></td></tr>
-          <tr><td>&emsp;w/o PRL</td><td>8.25s</td><td>1.79</td><td>4.48</td><td>46.73</td><td>2.85</td><td>3.89</td><td>0.186</td><td>3.12<small>&pm;0.81</small></td><td>3.42<small>&pm;0.79</small></td></tr>
+          <tr><td>w/o ALM</td><td>AudioEditor</td><td>42.51</td><td>200</td><td>2.14</td><td>5.26</td><td>62.38</td><td>3.41</td><td>3.08</td><td>0.112</td><td>2.71<small>&pm;0.89</small></td><td>2.85<small>&pm;0.94</small></td></tr>
+          <tr><td rowspan="7">w/ ALM</td><td>MMEdit</td><td>19.28</td><td>100</td><td>2.23</td><td>5.58</td><td>58.92</td><td>3.52</td><td>2.96</td><td>0.105</td><td>2.95<small>&pm;0.85</small></td><td>3.32<small>&pm;0.82</small></td></tr>
+          <tr><td>SAO-Instruct</td><td>18.58</td><td>50</td><td>1.89</td><td>4.73</td><td>55.14</td><td>3.18</td><td>3.45</td><td>0.148</td><td>3.11<small>&pm;0.79</small></td><td>3.58<small>&pm;0.76</small></td></tr>
+          <tr><td>SmartDJ</td><td><strong>8.62</strong></td><td>50</td><td>1.72</td><td>4.15</td><td>48.36</td><td>2.87</td><td>3.82</td><td>0.175</td><td>3.23<small>&pm;0.74</small></td><td>3.75<small>&pm;0.71</small></td></tr>
+          <tr class="ours-row"><td><strong>QuarkAudio-Edit</strong></td><td>9.85</td><td><strong>20</strong></td><td><strong>1.38</strong></td><td><strong>3.27</strong></td><td><strong>35.41</strong></td><td><strong>2.18</strong></td><td><strong>4.32</strong></td><td><strong>0.241</strong></td><td><strong>3.53</strong><small>&pm;0.65</small></td><td><strong>3.98</strong><small>&pm;0.58</small></td></tr>
+          <tr><td>&emsp;w/o RAG</td><td>9.72</td><td>20</td><td>1.51</td><td>3.59</td><td>38.28</td><td>2.42</td><td>4.16</td><td>0.225</td><td>3.42<small>&pm;0.68</small></td><td>3.86<small>&pm;0.62</small></td></tr>
+          <tr><td>&emsp;w/o CoT</td><td>8.25</td><td>20</td><td>1.62</td><td>3.89</td><td>41.28</td><td>2.61</td><td>4.05</td><td>0.212</td><td>3.24<small>&pm;0.76</small></td><td>3.61<small>&pm;0.74</small></td></tr>
+          <tr><td>&emsp;w/o PRL</td><td>8.25</td><td>20</td><td>1.79</td><td>4.48</td><td>46.73</td><td>2.85</td><td>3.89</td><td>0.186</td><td>3.12<small>&pm;0.81</small></td><td>3.42<small>&pm;0.79</small></td></tr>
         </tbody>
       </table>
     </div>
+    <p class="table-note">
+      Compared to SmartDJ, QuarkAudio-Edit reduces FAD by 21.2% (3.27 vs. 4.15) and FD by 26.8% (35.41 vs. 48.36),
+      while improving CLAP by 37.7% (0.241 vs. 0.175) and running 1.9&times; faster than SAO-Instruct in only 20 steps.
+    </p>
 
     <!-- Per-operation FAD -->
     <h3 class="subsection-title">Per-Operation Comparison (FAD &darr;)</h3>
     <p class="table-note">
-      FAD (Fr&eacute;chet Audio Distance) measures distributional distance between generated and reference audio. Lower is better.
-      SmartDJ results are included where the system supports the corresponding operation.
+      Per-operation FAD across the six atomic editing operations on 3,000 single-step samples. Lower is better.
+      QuarkAudio-Edit outperforms all baselines across all operations, with large gains on
+      <strong>Order</strong> (FAD 2.886 vs. MMEdit 10.08, &minus;71.4%) and <strong>Loudness</strong>
+      (3.094 vs. SmartDJ 4.256, &minus;27.3%). The 6-task model maintains comparable performance
+      (&lt;2% degradation) with the 2-task variant, confirming that the six atomic categories compose
+      without mutual interference.
     </p>
-    <div class="table-wrap">
-      <table class="results-table">
-        <thead>
-          <tr>
-            <th>Model</th>
-            <th>Add</th><th>Remove</th><th>Replace</th>
-            <th>Order</th><th>Loudness</th><th>Speed</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>AudioEditor</td><td>3.57</td><td>4.14</td><td>3.54</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
-          <tr><td>SAO-Instruct</td><td>3.57</td><td>6.53</td><td>4.63</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
-          <tr><td>SmartDJ</td><td>2.86</td><td>4.26</td><td>3.26</td><td>&mdash;</td><td>4.26</td><td>5.69</td></tr>
-          <tr><td>MMEdit</td><td>10.18</td><td>10.18</td><td>5.92</td><td>10.08</td><td>6.72</td><td>9.00</td></tr>
-          <tr><td>QuarkAudio-Edit-2task</td><td>1.78</td><td>3.35</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
-          <tr class="ours-row">
-            <td><strong>QuarkAudio-Edit-6task</strong></td>
-            <td><strong>1.98</strong></td><td><strong>3.50</strong></td><td><strong>2.65</strong></td>
-            <td><strong>2.89</strong></td><td><strong>3.09</strong></td><td><strong>4.34</strong></td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="method-figure">
+      <img src="assets/images/per_operation_fad.png"
+           alt="Per-operation FAD comparison across six atomic editing operations"
+           loading="lazy"
+           onerror="handleImageError(this, 'Figure 5 &middot; Per-Operation FAD Comparison')" />
+      <p class="figure-caption">
+        <strong>Figure 5.</strong> Per-operation FAD comparison across six atomic editing operations. Lower is better.
+      </p>
     </div>
 
 
-    <!-- Planner Ablation -->
-    <h3 class="subsection-title">Planner Ablation: What Drives the Improvement?</h3>
+    <!-- Progressive RL Ablation -->
+    <h3 class="subsection-title">Ablation on the Progressive RL Schedule</h3>
     <p class="table-note">
-      Fine-grained planner ablation on 500 complex instructions.
-      &ldquo;Direct&rdquo;: raw instruction without planning.
-      &ldquo;Atomic only&rdquo;: ground-truth commands without reasoning.
-      &ldquo;Reasoning only&rdquo;: full CoT but single-pass execution.
-      &ldquo;Full CoT&rdquo;: reasoning with sequential execution.
+      Ablation on the Progressive RL schedule (500 complex instructions).
+      <strong>S1</strong> optimizes CoT reasoning; <strong>S2</strong> optimizes audio fidelity.
+      The progressive schedule (FAD 3.27) clearly outperforms simultaneous joint training (FAD 4.02),
+      confirming that stabilizing CoT reasoning before fidelity optimization prevents gradient conflict.
     </p>
     <div class="table-wrap">
       <table class="results-table">
         <thead>
           <tr>
-            <th>Configuration</th>
+            <th>Schedule</th>
             <th>LSD &darr;</th><th>FAD &darr;</th><th>FD &darr;</th>
             <th>KL &darr;</th><th>IS &uarr;</th><th>CLAP &uarr;</th>
           </tr>
         </thead>
         <tbody>
-          <tr><td>Direct instruction</td><td>2.31</td><td>6.80</td><td>62.14</td><td>3.15</td><td>2.53</td><td>0.098</td></tr>
-          <tr><td>Atomic only</td><td>1.85</td><td>5.44</td><td>47.01</td><td>2.74</td><td>3.48</td><td>0.162</td></tr>
-          <tr><td>Reasoning only</td><td>1.96</td><td>5.81</td><td>49.92</td><td>2.91</td><td>3.21</td><td>0.143</td></tr>
+          <tr><td>S1 only</td><td>1.74</td><td>4.25</td><td>44.26</td><td>2.78</td><td>3.96</td><td>0.192</td></tr>
+          <tr><td>S2 only</td><td>1.76</td><td>4.12</td><td>43.25</td><td>2.82</td><td>3.85</td><td>0.198</td></tr>
+          <tr><td>Joint (simultaneous)</td><td>1.65</td><td>4.02</td><td>42.56</td><td>2.71</td><td>3.52</td><td>0.215</td></tr>
           <tr class="ours-row">
-            <td><strong>Full CoT (ours)</strong></td>
+            <td><strong>Progressive (Ours)</strong></td>
             <td><strong>1.38</strong></td><td><strong>3.27</strong></td><td><strong>35.41</strong></td>
             <td><strong>2.18</strong></td><td><strong>4.32</strong></td><td><strong>0.241</strong></td>
           </tr>
@@ -638,9 +765,10 @@
     <!-- Speech Editing -->
     <h3 class="subsection-title">Editor Generalization: Speech Editing (RealEdit Benchmark)</h3>
     <p class="table-note">
-      To assess cross-domain generalization, we evaluate on the RealEdit benchmark. Without any architecture changes,
-      the MMDiT editor handles word-level insertion, deletion, and substitution by conditioning on the target transcript.
-      The ALM planner is bypassed since speech instructions are explicit transcripts requiring no decomposition.
+      Cross-domain generalization on the RealEdit benchmark. Using transcript conditioning alone and without any
+      architecture changes, the MMDiT editor handles word-level insertion, deletion, and substitution.
+      QuarkAudio-Edit attains the highest speaker similarity (SpkSIM 0.9752) and the lowest WER among all
+      generative editors except CosyEdit (4.95% vs. 4.50%), while its UTMOS (3.46) surpasses the ground truth (3.38).
     </p>
     <div class="table-wrap">
       <table class="results-table">
@@ -656,16 +784,52 @@
         <tbody>
           <tr><td>GroundTruth</td><td>6.06</td><td>&mdash;</td><td>3.34</td><td>3.38</td></tr>
           <tr><td>VoiceCraft</td><td>6.55</td><td>0.9712</td><td>3.18</td><td>3.31</td></tr>
-          <tr><td>Step-Audio-EditX</td><td>10.76</td><td>0.9588</td><td>3.94</td><td>3.89</td></tr>
+          <tr><td>Step-Audio-EditX</td><td>10.76</td><td>0.9588</td><td><strong>3.94</strong></td><td><strong>3.89</strong></td></tr>
           <tr><td>MiMo-Audio</td><td>16.86</td><td>0.9371</td><td>3.48</td><td>3.38</td></tr>
           <tr><td>Ming-UniAudio</td><td>9.98</td><td>0.9670</td><td>3.13</td><td>3.18</td></tr>
-          <tr><td>CosyEdit</td><td>4.50</td><td>0.9734</td><td>3.19</td><td>3.30</td></tr>
+          <tr><td>CosyEdit</td><td><strong>4.50</strong></td><td>0.9734</td><td>3.19</td><td>3.30</td></tr>
           <tr class="ours-row">
             <td><strong>QuarkAudio-Edit (ours)</strong></td>
-            <td><strong>4.15</strong></td>
-            <td><strong>0.9785</strong></td>
-            <td>3.25</td>
-            <td>3.42</td>
+            <td>4.95</td>
+            <td><strong>0.9752</strong></td>
+            <td>3.32</td>
+            <td>3.46</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- MMAE Benchmark -->
+    <h3 class="subsection-title">External Benchmark Generalization (MMAE, Overall)</h3>
+    <p class="table-note">
+      Evaluation on the MMAE benchmark. IFR: instruction following rate; CR: content retention; EMR: exact match rate.
+      QuarkAudio-Edit achieves the highest instruction following rate (IFR 51.85%), surpassing Audio-Omni (50.73%)
+      and UNISON (44.89%). Content retention (CR 59.45%) remains competitive: the gap to UNISON (66.43%) reflects
+      more aggressive instruction compliance, as confirmed by the anti-correlated Identity baseline (CR 94.13%, IFR 27.37%).
+    </p>
+    <div class="table-wrap">
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>IFR &uarr;</th>
+            <th>CR &uarr;</th>
+            <th>EMR &uarr;</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Identity</td><td>27.37</td><td>94.13</td><td>&mdash;</td></tr>
+          <tr><td>Noise</td><td>32.08</td><td>15.68</td><td>&mdash;</td></tr>
+          <tr><td>Ming-UniAudio</td><td>29.82</td><td>52.71</td><td>3.20</td></tr>
+          <tr><td>SmartDJ w/o planner</td><td>38.20</td><td>55.41</td><td>4.62</td></tr>
+          <tr><td>SmartDJ w/ planner</td><td>42.26</td><td>48.33</td><td>3.12</td></tr>
+          <tr><td>UNISON</td><td>44.89</td><td><strong>66.43</strong></td><td>4.60</td></tr>
+          <tr><td>Audio-Omni</td><td>50.73</td><td>56.93</td><td><strong>4.99</strong></td></tr>
+          <tr class="ours-row">
+            <td><strong>QuarkAudio-Edit (ours)</strong></td>
+            <td><strong>51.85</strong></td>
+            <td>59.45</td>
+            <td>4.73</td>
           </tr>
         </tbody>
       </table>
@@ -674,37 +838,49 @@
     <!-- Key Findings -->
     <h3 class="subsection-title">Key Ablation Findings</h3>
     <p class="table-note">
-      From the planner ablation above, three findings emerge:
+      From the component and schedule ablations, four findings emerge:
     </p>
     <div class="ablation-grid">
       <div class="ablation-card">
-        <div class="ablation-label">Atomic decomposition</div>
-        <div class="ablation-value">38.5%</div>
-        <div class="ablation-desc">Necessary first step: FAD 6.80 &rarr; 5.44</div>
+        <div class="ablation-label">Progressive vs. Joint RL</div>
+        <div class="ablation-value">FAD 3.27</div>
+        <div class="ablation-desc">Progressive schedule beats joint training (4.02)</div>
       </div>
       <div class="ablation-card">
-        <div class="ablation-label">Reasoning only ≠ better</div>
-        <div class="ablation-value">FAD 5.81</div>
-        <div class="ablation-desc">CoT text without sequential exec hurts</div>
+        <div class="ablation-label">S1: CoT reasoning</div>
+        <div class="ablation-value">IS &uarr;3.96</div>
+        <div class="ablation-desc">Largest gain in semantic quality (3.71 &rarr; 3.96)</div>
       </div>
       <div class="ablation-card">
-        <div class="ablation-label">Full CoT + sequential</div>
-        <div class="ablation-value">&minus;39.9%</div>
-        <div class="ablation-desc">FAD 5.44 &rarr; 3.27 (61.5% of total gain)</div>
+        <div class="ablation-label">S2: audio fidelity</div>
+        <div class="ablation-value">FAD 4.12</div>
+        <div class="ablation-desc">Most effective spectral-distortion reduction (4.62 &rarr; 4.12)</div>
       </div>
       <div class="ablation-card">
-        <div class="ablation-label">Source-latent init</div>
-        <div class="ablation-value">FD +62%</div>
-        <div class="ablation-desc">FD 18.38 &rarr; 29.73 (Gaussian is better)</div>
+        <div class="ablation-label">RAG retrieval</div>
+        <div class="ablation-value">+9.8%</div>
+        <div class="ablation-desc">Relative FAD increase without RAG (3.59 vs. 3.27)</div>
       </div>
     </div>
 
-    <!-- Error Accumulation -->
-    <h3 class="subsection-title">Error Accumulation vs. Decomposition Steps</h3>
+    <!-- Inference Efficiency -->
+    <h3 class="subsection-title">Inference Efficiency Analysis</h3>
     <p class="table-note">
-      Performance on complex multi-step instructions degrades due to error accumulation in the sequential planning paradigm.
-      Error taxonomy analysis identifies planner reasoning as the primary bottleneck, suggesting that
-      scaling inference-time reasoning may yield further improvements.
+      The full pipeline requires 9.85 s per 10 s sample on a single A100:
+      ALM planning ~2.1 s (21.3%), RAG retrieval 0.3 s (3.0%), MMDiT generation (20 NFE) 7.1 s (72.1%),
+      and encoding/post-processing 0.35 s (3.6%). Compared with AudioEditor (42.51 s) and MMEdit (19.28 s),
+      the single-pass design achieves 4.3&times; and 2.0&times; speedups; consistency distillation can further
+      reduce NFE to 4&ndash;6 steps. This latency suits offline creative workflows such as podcast post-processing.
+    </p>
+
+    <!-- RAG Robustness -->
+    <h3 class="subsection-title">RAG Retrieval Robustness</h3>
+    <p class="table-note">
+      The planner incorporates graceful degradation: when maximum cosine similarity falls below &tau; = 0.6,
+      the system reverts to zero-shot planning. Without RAG the model achieves FAD 3.59 (9.8% relative increase over 3.27).
+      The 550K+ index spans six atomic operation types, providing sufficient coverage for common patterns;
+      for rare long-tail compositions, performance degrades gracefully since the ALM retains decomposition
+      capability independent of retrieval quality.
     </p>
 
     <!-- Spectrogram Comparison -->
@@ -856,13 +1032,14 @@ function switchSpeechLang(lang) {
     <h2 class="section-title">BibTeX</h2>
     <div class="bibtex-box">
       <button class="copy-btn" onclick="copyBibtex()"><i class="bi bi-clipboard"></i> Copy</button>
-      <pre id="bibtex">@inproceedings{quarkaudioedit2026,
-  title     = {{QuarkAudio-Edit}: Atomic Decomposition with
-               Retrieval-Augmented Planning for Audio Editing},
+      <pre id="bibtex">@inproceedings{quarkaudioedit2027,
+  title     = {{QuarkAudio-Edit}: Text-Guided Audio Editing with
+               Retrieval-Augmented Atomic Planning and
+               Progressive Reinforcement Learning},
   author    = {Anonymous Authors},
-  booktitle = {Proceedings of the 2026 Conference on Empirical
-               Methods in Natural Language Processing (EMNLP)},
-  year      = {2026},
+  booktitle = {Proceedings of the AAAI Conference on
+               Artificial Intelligence (AAAI)},
+  year      = {2027},
   note      = {Under review}
 }</pre>
     </div>
